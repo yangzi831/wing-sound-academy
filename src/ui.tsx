@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { X } from "lucide-react";
 import type { Artifact, Status } from "./types";
 import { statuses, safeUrl } from "./domain";
-import { audioStore } from "./storage";
+import { getAudio } from "./cloud-audio";
 export function go(page: string, id?: string) {
   location.hash = page + (id ? "/" + id : "");
 }
@@ -192,13 +192,14 @@ export function Signal({ small = false }: { small?: boolean }) {
 export function AudioPlayer({ artifact }: { artifact: Artifact }) {
   const [src, setSrc] = useState("");
   const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let active = true;
     let objectUrl = "";
     setSrc("");
     setError("");
     if (artifact.fileId) {
-      audioStore("get", artifact.fileId)
+      getAudio(artifact)
         .then((blob) => {
           if (!active) return;
           if (blob) {
@@ -206,15 +207,15 @@ export function AudioPlayer({ artifact }: { artifact: Artifact }) {
             setSrc(objectUrl);
           } else setError("本地音频已缺失，请从完整备份恢复或重新添加。");
         })
-        .catch(() => {
-          if (active) setError("无法读取本地音频。");
+        .catch((e) => {
+          if (active) setError((e as Error).message);
         });
     } else if (artifact.url) setSrc(safeUrl(artifact.url));
     return () => {
       active = false;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [artifact.fileId, artifact.url]);
+  }, [artifact.fileId, artifact.url, artifact.remotePath, attempt]);
   return (
     <>
       {src && (
@@ -230,7 +231,14 @@ export function AudioPlayer({ artifact }: { artifact: Artifact }) {
           }
         />
       )}
-      {error && <p className="help warning">{error}</p>}
+      {error && (
+        <p className="help warning">
+          {error}{" "}
+          <button className="text-btn" onClick={() => setAttempt((n) => n + 1)}>
+            重试播放
+          </button>
+        </p>
+      )}
     </>
   );
 }

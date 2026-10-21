@@ -1,6 +1,6 @@
 import { ProjectArtwork, StudioArtwork, projectAccent } from "./artwork";
 import { teachingLabel, isReviewEvent, statusLabel } from "./labels";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -17,8 +17,8 @@ import {
   Check,
 } from "lucide-react";
 import type { AcademyData, Artifact, Project, Session } from "./types";
-import { createInitialData } from "./data";
-import { repository, audioStore } from "./storage";
+import type { ReactNode } from "react";
+import type { SyncEngine } from "./sync-engine";
 import { formatDate, localDate, safeUrl, semesterClock } from "./domain";
 import {
   Tag,
@@ -61,23 +61,25 @@ const routeFromHash = (): Route => {
     id,
   };
 };
-export default function App() {
-  const [initial] = useState(() => {
+export default function App({
+  engine,
+  syncTools,
+}: {
+  engine: SyncEngine;
+  syncTools: ReactNode;
+}) {
+  const [loadError, setLoadError] = useState("");
+  const data = engine.state.data;
+  const setData = (change: AcademyData | ((d: AcademyData) => AcademyData)) => {
     try {
-      return { data: repository.load(), error: "" };
-    } catch {
-      return {
-        data: createInitialData(),
-        error:
-          "已存记录无法读取。为避免覆盖原数据，自动保存已暂停。请先下载原始记录，或导入有效备份恢复。",
-      };
+      engine.edit(change);
+      setSaveError("");
+    } catch (e) {
+      setSaveError((e as Error).message);
     }
-  });
-  const [loadError, setLoadError] = useState(initial.error);
-  const [data, setData] = useState<AcademyData>(initial.data);
+  };
   const [route, setRoute] = useState<Route>(routeFromHash);
   const [saveError, setSaveError] = useState("");
-  const [saved, setSaved] = useState("");
   const [toast, setToast] = useState("");
   const [menu, setMenu] = useState(false);
   const [critFilter, setCritFilter] = useState("");
@@ -91,28 +93,6 @@ export default function App() {
   const [artifactKind, setArtifactKind] =
     useState<Artifact["kind"]>("音频版本");
   const [today, setToday] = useState(localDate());
-  const firstSave = useRef(true);
-  useEffect(() => {
-    if (firstSave.current) {
-      firstSave.current = false;
-      return;
-    }
-    if (loadError) return;
-    try {
-      repository.save(data);
-      setSaveError("");
-      setSaved(
-        new Date().toLocaleTimeString("zh-CN", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      );
-    } catch {
-      setSaveError(
-        "本地保存失败，可能空间不足。请立即导出备份以保留当前记录。",
-      );
-    }
-  }, [data, loadError]);
   useEffect(() => {
     const f = () => {
       setRoute(routeFromHash());
@@ -184,7 +164,7 @@ export default function App() {
   };
   const removeArtifact = async (a: Artifact) => {
     if (
-      !confirm("删除这份档案及其本地音频？关联作品讲评会保留，版本关联将清除。")
+      !confirm("移除这份档案？关联讲评保留，版本关联清除。原音频暂保留供恢复。")
     )
       return;
     setData((d) => ({
@@ -194,13 +174,7 @@ export default function App() {
         c.versionId === a.id ? { ...c, versionId: "" } : c,
       ),
     }));
-    if (a.fileId) {
-      try {
-        await audioStore("delete", a.fileId);
-      } catch {
-        setToast("记录已删除，但本地附件清理失败");
-      }
-    }
+    setToast("档案已移除；原音频保留供备份和恢复，云文件可在同步管理中清理。");
   };
   function critList(projectId?: string) {
     const cs = data.critiques
@@ -328,13 +302,21 @@ export default function App() {
             <div className="artifact-foot">
               <span>
                 {a.fileId
-                  ? `本地附件 · ${a.fileName}`
+                  ? `${engine.uploading === (a.fileName || a.title) ? "上传与校验中…" : a.remotePath ? "私有云音频" : "待上传音频"} · ${a.fileName}`
                   : a.url
                     ? "外部链接"
                     : "本地文字记录"}
               </span>
               <span>{formatDate(a.createdAt.slice(0, 10))}</span>
             </div>
+            {engine.audioErrors[a.id] && (
+              <p className="warning" role="alert">
+                {engine.audioErrors[a.id]}{" "}
+                <button className="text-btn" onClick={() => void engine.sync()}>
+                  重试上传
+                </button>
+              </p>
+            )}
           </article>
         ))}
       </div>
@@ -392,6 +374,7 @@ export default function App() {
             </a>
           ))}
         </nav>
+        {syncTools}
         <button
           className="header-tool"
           onClick={() => setModal("backup")}
@@ -423,7 +406,7 @@ export default function App() {
           <span className="desktop-only"> · {data.semester.name}</span>
         </span>
         <span className="mono bar-right">
-          LOCAL STUDIO <HardDrive size={12} />
+          CLOUD STUDIO <HardDrive size={12} />
         </span>
       </div>
       {(loadError || saveError) && (
@@ -927,9 +910,9 @@ export default function App() {
             <div className="storage-notice">
               <HardDrive size={18} />
               <p>
-                本地工作室：文字保存在此浏览器，本地音频保存在 IndexedDB。
-                <strong>不会自动跨设备同步。</strong>
-                完整备份包含音频文件；外部链接只保存地址。
+                个人工作室：文字先保存在本机缓存，再同步到云端。
+                <strong>私有音频上传并校验后，其他设备可登录试听。</strong>
+                完整备份另行打包文字与文件；外部链接只保存地址。
               </p>
               <button className="text-btn" onClick={() => setModal("backup")}>
                 备份与迁移 <ArrowUpRight size={15} />
@@ -962,14 +945,10 @@ export default function App() {
             className={`save-state ${saveError || loadError ? "warning" : ""}`}
           >
             <i />
-            {saveError || loadError
-              ? "保存需处理"
-              : saved
-                ? `已保存于 ${saved}`
-                : "本地存储已就绪"}
+            {saveError || loadError ? "保存需处理" : engine.status}
           </span>
           <button onClick={() => setModal("backup")}>
-            本地数据 · 备份与迁移 <ArrowUpRight size={12} />
+            完整备份 · 导入与导出 <ArrowUpRight size={12} />
           </button>
         </div>
       </footer>
@@ -1026,9 +1005,9 @@ export default function App() {
         <BackupDialog
           data={data}
           close={() => setModal(null)}
-          replace={(d) => {
+          replace={async (d) => {
+            await engine.restore(d);
             setLoadError("");
-            setData(d);
             setToast("完整备份已导入");
             setModal(null);
           }}

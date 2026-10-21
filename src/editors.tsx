@@ -1,11 +1,13 @@
 import { teachingLabel } from "./labels";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Check, Upload, Download, HardDrive, ArrowUpRight } from "lucide-react";
 import type { AcademyData, Artifact, Critique, Session } from "./types";
 import { createBackup, readBackup, audioStore } from "./storage";
 import { localDate, safeUrl } from "./domain";
 import { Modal, Field } from "./ui";
+import { checkAudio } from "./cloud-audio";
+import { equal } from "./sync-model";
 export function CritEditor({
   data,
   id,
@@ -38,7 +40,12 @@ export function CritEditor({
       },
   );
   const [created, setCreated] = useState(!!id);
+  const currentReview = data.critiques.find((x) => x.id === c.id);
+  useEffect(() => {
+    if (currentReview) setC(currentReview);
+  }, [currentReview]);
   const patch = (v: Partial<Critique>) => {
+    if (created && !currentReview) return;
     const n = { ...c, ...v, updatedAt: new Date().toISOString() };
     setC(n);
     update(n);
@@ -55,6 +62,11 @@ export function CritEditor({
           修改即自动保存；不使用数字评分。
           {!created && " 填写任意一项后建立记录。"}
         </p>
+        {created && !currentReview && (
+          <p role="alert" className="warning">
+            此记录已在其他设备移除，请关闭窗口。历史内容可在云同步管理中恢复。
+          </p>
+        )}
         <div className="form-grid">
           <label className="field">
             <span>对应项目</span>
@@ -212,9 +224,34 @@ export function ArtifactEditor({
   const [file, setFile] = useState<File>();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const currentArtifact = data.artifacts.find((x) => x.id === a.id);
+  const knownArtifact = useRef(currentArtifact);
+  const [draftConflict, setDraftConflict] = useState(false);
+  useEffect(() => {
+    if (equal(knownArtifact.current, currentArtifact)) return;
+    if (
+      currentArtifact &&
+      (equal(a, knownArtifact.current) || equal(a, currentArtifact))
+    )
+      setA(currentArtifact);
+    else if (id) {
+      setDraftConflict(true);
+      setError(
+        "其他设备已更新此档案。未保存的草稿仍保留，请先复制文字，再载入最新记录进行合并。",
+      );
+    }
+    knownArtifact.current = currentArtifact;
+  }, [currentArtifact]);
   const patch = (v: Partial<Artifact>) => {
+    if (id && !currentArtifact) {
+      setError(
+        "此档案已在其他设备移除。请关闭窗口后从云端历史恢复，或新建档案。",
+      );
+      return;
+    }
     const next = { ...a, ...v };
     setA(next);
+    if (draftConflict) return;
     if (
       id &&
       next.title.trim() &&
@@ -226,6 +263,14 @@ export function ArtifactEditor({
   };
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    if (draftConflict) {
+      setError("请先复制草稿并载入最新记录，再合并保存。");
+      return;
+    }
+    if (id && !currentArtifact) {
+      setError("此档案已在其他设备移除，请先关闭窗口。");
+      return;
+    }
     if (a.url && !safeUrl(a.url)) {
       setError("外部链接需要完整的 http:// 或 https:// 地址。");
       return;
@@ -236,16 +281,35 @@ export function ArtifactEditor({
     }
     setBusy(true);
     setError("");
+    const submitBase = knownArtifact.current;
     try {
       let next = { ...a, title: a.title.trim() };
       if (file) {
+        checkAudio(file, file.name);
         const fileId = crypto.randomUUID();
         await audioStore("put", fileId, file);
-        next = { ...next, fileId, fileName: file.name, mime: file.type };
+        next = {
+          ...next,
+          fileId,
+          fileName: file.name,
+          mime: file.type,
+          fileSize: file.size,
+        };
+        delete next.remotePath;
+        delete next.fileHash;
+      }
+      if (id && !equal(submitBase, knownArtifact.current)) {
+        setError(
+          "保存附件期间档案已更新。本次所选文件仍保留，请核对最新文字后再次保存。",
+        );
+        setBusy(false);
+        return;
       }
       save(next);
-    } catch {
-      setError("保存附件失败，请检查浏览器存储空间后重试。");
+    } catch (e) {
+      setError(
+        (e as Error).message || "保存附件失败，请检查浏览器存储空间后重试。",
+      );
       setBusy(false);
     }
   };
@@ -258,6 +322,26 @@ export function ArtifactEditor({
     >
       <form onSubmit={submit}>
         <div className="dialog-body">
+          {draftConflict && (
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={() => {
+                if (
+                  currentArtifact &&
+                  confirm(
+                    "已复制未保存的草稿文字？载入最新记录会替换此表单内容。",
+                  )
+                ) {
+                  setA(currentArtifact);
+                  setDraftConflict(false);
+                  setError("");
+                }
+              }}
+            >
+              载入最新档案（请先复制草稿）
+            </button>
+          )}
           <p className="help">
             {id
               ? "文字修改自动保存；替换音频附件后请点击保存。"
@@ -326,7 +410,7 @@ export function ArtifactEditor({
           {(a.kind === "音频版本" || a.kind === "声音素材") && (
             <label className="file-drop field">
               <Upload size={22} />
-              <span>添加本地音频 / MP3、WAV、OGG、FLAC 等</span>
+              <span>添加试听音频 / 推荐 MP3、M4A · 单文件≤45 MB</span>
               <input
                 type="file"
                 accept="audio/*,.wav,.mp3,.ogg,.flac,.m4a,.aiff"
@@ -335,9 +419,35 @@ export function ArtifactEditor({
               <small>
                 {file
                   ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(1)} MB`
-                  : a.fileName || "文件仅保存在当前浏览器，不会上传云端。"}
+                  : a.fileName || "先保存本机，随后上传并校验私有云文件。"}
               </small>
             </label>
+          )}
+          {a.fileId && (
+            <button
+              type="button"
+              className="text-btn"
+              onClick={() => {
+                if (a.kind === "音频版本" && !a.url) {
+                  setError(
+                    "音频版本需要文件或链接。可选择新文件更换，或删除整份档案。",
+                  );
+                  return;
+                }
+                setFile(undefined);
+                const next = { ...a };
+                delete next.fileId;
+                delete next.remotePath;
+                delete next.fileHash;
+                delete next.fileName;
+                delete next.fileSize;
+                delete next.mime;
+                setA(next);
+                if (id) save(next, false);
+              }}
+            >
+              移除关联音频（原文件保留供恢复）
+            </button>
           )}
           <Field
             label="内容与修改说明"
@@ -364,7 +474,7 @@ export function ArtifactEditor({
           )}
         </div>
         <div className="dialog-foot">
-          <span className="help">填写后保存至当前浏览器</span>
+          <span className="help">先保存本机，再同步到私有云端</span>
           <button disabled={busy} className="primary-btn" type="submit">
             {busy ? "正在保存…" : "保存档案"} <Check size={15} />
           </button>
@@ -382,7 +492,7 @@ export function BackupDialog({
 }: {
   data: AcademyData;
   close: () => void;
-  replace: (d: AcademyData) => void;
+  replace: (d: AcademyData) => void | Promise<void>;
   notify: (s: string) => void;
   recovery: boolean;
 }) {
@@ -426,8 +536,8 @@ export function BackupDialog({
     setBusy(true);
     setError("");
     try {
-      const next = await readBackup(await file.text());
-      replace(next);
+      const next = await readBackup(await file.text(), false);
+      await replace(next);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -437,7 +547,7 @@ export function BackupDialog({
   };
   return (
     <Modal
-      title="本地数据 / Backup & Migration"
+      title="完整备份 / Backup & Restore"
       onClose={() => {
         if (!busy) close();
       }}
@@ -445,10 +555,10 @@ export function BackupDialog({
       <div className="dialog-body">
         <div className="backup-heading">
           <HardDrive size={30} />
-          <h3>你的个人工作室，保存在本机。</h3>
+          <h3>为个人工作室另存一份完整备份。</h3>
           <p>
-            文字数据使用 localStorage；音频使用
-            IndexedDB。不同浏览器、设备、域名和端口分别保存，数据不会自动同步。清除浏览器数据可能删除记录，请定期导出。
+            云同步让授权设备使用同一份记录；本机缓存支持离线编辑。完整 JSON
+            备份独立于云同步，包含文字与音频原始字节，请定期导出并妥善保管。
           </p>
         </div>
         <div className="backup-stats">
@@ -513,7 +623,8 @@ export function BackupDialog({
           onChange={(e) => void importFile(e.target.files?.[0])}
         />
         <p className="help">
-          外部音频只备份链接地址，不包含远端文件。大体积音频建议同时保留原始文件。未接入云存储与账号系统。
+          本机缺少的私有云音频会在导出时下载；离线且文件缺失时会明确报错。外部音频只备份链接。导入前会生成本机恢复快照，恢复内容经版本检查后同步；旧版完整
+          JSON 仍可导入。
         </p>
         {busy && <p role="status">正在处理备份，请保持此页面打开…</p>}
         {error && (
@@ -537,6 +648,7 @@ export function SessionEditor({
   close: () => void;
 }) {
   const [draft, setDraft] = useState(session);
+  const [original] = useState(session);
   const [error, setError] = useState("");
   const patch = (v: Partial<Session>) => setDraft({ ...draft, ...v });
   return (
@@ -544,6 +656,18 @@ export function SessionEditor({
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          if (
+            ["date", "topic", "event", "objectives", "task", "submission"].some(
+              (k) =>
+                draft[k as keyof Session] !== original[k as keyof Session] &&
+                session[k as keyof Session] !== original[k as keyof Session],
+            )
+          ) {
+            setError(
+              "其他设备已修改相同课程字段。请先复制本次输入，再关闭并重新打开配置进行比较。",
+            );
+            return;
+          }
           const prev = data.sessions.find((s) => s.week === session.week - 1),
             next = data.sessions.find((s) => s.week === session.week + 1);
           if (
@@ -558,12 +682,14 @@ export function SessionEditor({
             return;
           }
           save({
-            date: draft.date,
-            topic: draft.topic,
-            event: draft.event,
-            objectives: draft.objectives,
-            task: draft.task,
-            submission: draft.submission,
+            ...Object.fromEntries(
+              ["date", "topic", "event", "objectives", "task", "submission"]
+                .filter(
+                  (k) =>
+                    draft[k as keyof Session] !== original[k as keyof Session],
+                )
+                .map((k) => [k, draft[k as keyof Session]]),
+            ),
           });
         }}
       >
@@ -618,12 +744,34 @@ export function CourseEditor({
   close: () => void;
 }) {
   const [s, setS] = useState(data.semester);
+  const [original] = useState(data.semester);
+  const [error, setError] = useState("");
   return (
     <Modal title="课程信息 / Course Configuration" onClose={close}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          save(s);
+          const changed = Object.keys(s).filter(
+            (k) => s[k as keyof typeof s] !== original[k as keyof typeof s],
+          );
+          if (
+            changed.some(
+              (k) =>
+                data.semester[k as keyof typeof s] !==
+                original[k as keyof typeof s],
+            )
+          ) {
+            setError(
+              "其他设备已修改相同字段。请先复制本次输入，再关闭并重新打开配置进行比较。",
+            );
+            return;
+          }
+          save({
+            ...data.semester,
+            ...Object.fromEntries(
+              changed.map((k) => [k, s[k as keyof typeof s]]),
+            ),
+          });
         }}
       >
         <div className="dialog-body">
@@ -645,6 +793,11 @@ export function CourseEditor({
           <p className="help">
             周次日期和教学内容可在任意周次详情中编辑。本学期固定为16周、P00–P04五个项目。
           </p>
+          {error && (
+            <p role="alert" className="warning">
+              {error}
+            </p>
+          )}
         </div>
         <div className="dialog-foot">
           <button className="primary-btn">

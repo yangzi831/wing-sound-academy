@@ -575,9 +575,11 @@ export function ProjectDetail({
 export function Syllabus({
   data,
   edit,
+  publicView = false,
 }: {
   data: AcademyData;
   edit: () => void;
+  publicView?: boolean;
 }) {
   return (
     <>
@@ -588,7 +590,7 @@ export function Syllabus({
       >
         <button className="secondary-btn" onClick={edit}>
           <Pencil size={15} />
-          编辑课程信息
+          {publicView ? "登录个人工作室" : "编辑课程信息"}
         </button>
       </PageTitle>
       <div className="syllabus-layout">
@@ -665,7 +667,7 @@ export function Syllabus({
               <button
                 className="syllabus-project"
                 key={p.id}
-                onClick={() => go("project", p.id)}
+                onClick={() => (publicView ? edit() : go("project", p.id))}
               >
                 <span className="mono blue">{p.id}</span>
                 <div>
@@ -712,7 +714,10 @@ export function Syllabus({
             <p>
               保留各项目正式音频、不同版本Demo、创作笔记、重要音色与素材记录、参考研究和结题总结。期末以正式作品与过程档案共同呈现研究成果。
             </p>
-            <button className="text-btn" onClick={() => go("archive")}>
+            <button
+              className="text-btn"
+              onClick={() => (publicView ? edit() : go("archive"))}
+            >
               进入创作档案 <ArrowRight size={15} />
             </button>
           </section>

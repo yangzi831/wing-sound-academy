@@ -120,9 +120,11 @@ export function validateData(x: unknown): AcademyData {
           a.kind as string,
         ) &&
         typeof a.final === "boolean" &&
-        ["fileId", "fileName", "mime"].every(
+        ["fileId", "fileName", "mime", "remotePath", "fileHash"].every(
           (k) => a[k] === undefined || typeof a[k] === "string",
         ) &&
+        (a.fileSize === undefined ||
+          (typeof a.fileSize === "number" && a.fileSize >= 0)) &&
         validDate((a.createdAt as string).slice(0, 10)),
     )
   )
@@ -223,11 +225,18 @@ export interface Backup {
   data: AcademyData;
   audio: Record<string, string>;
 }
+let remoteAudio:
+  ((a: AcademyData["artifacts"][number]) => Promise<Blob>) | undefined;
+export function setBackupAudioResolver(resolver: typeof remoteAudio) {
+  remoteAudio = resolver;
+}
 export async function createBackup(data: AcademyData): Promise<Backup> {
   const audio: Record<string, string> = {};
   for (const a of data.artifacts) {
     if (a.fileId) {
-      const blob = await audioStore("get", a.fileId);
+      const blob =
+        (await audioStore("get", a.fileId)) ||
+        (remoteAudio && (await remoteAudio(a)));
       if (!blob)
         throw new Error(`附件「${a.fileName}」缺失，无法生成完整备份。`);
       audio[a.fileId] = await new Promise((resolve, reject) => {
@@ -242,11 +251,14 @@ export async function createBackup(data: AcademyData): Promise<Backup> {
     format: "wing-sound-backup",
     version: 1,
     exportedAt: new Date().toISOString(),
-    data,
+    data: structuredClone(data),
     audio,
   };
 }
-export async function readBackup(raw: string): Promise<AcademyData> {
+export async function readBackup(
+  raw: string,
+  persist = true,
+): Promise<AcademyData> {
   const b = JSON.parse(raw);
   if (
     !object(b) ||
@@ -273,6 +285,7 @@ export async function readBackup(raw: string): Promise<AcademyData> {
         new Blob([bytes], { type: head.slice(5).split(";")[0] }),
       ]);
       a.fileId = newId;
+      delete a.remotePath;
     }
   }
   const written: string[] = [];
@@ -281,7 +294,7 @@ export async function readBackup(raw: string): Promise<AcademyData> {
       await audioStore("put", id, blob);
       written.push(id);
     }
-    repository.save(data);
+    if (persist) repository.save(data);
     return data;
   } catch (e) {
     await Promise.all(written.map((id) => audioStore("delete", id)));

@@ -65,6 +65,9 @@ export interface Artifact {
   fileId?: string;
   fileName?: string;
   mime?: string;
+  remotePath?: string;
+  fileSize?: number;
+  fileHash?: string;
   final: boolean;
   createdAt: string;
 }
