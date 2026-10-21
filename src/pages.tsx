@@ -1,3 +1,4 @@
+import { teachingLabel, statusLabel } from "./labels";
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import {
@@ -73,7 +74,7 @@ export function Schedule({
         </span>
         <p>
           日期定位教学周；完成状态由手动记录。
-          <span className="blue"> W09 为演出期弹性 Studio 周。</span>
+          <span className="blue"> W09 为演出期弹性工作室课程。</span>
         </p>
         {next && (
           <button
@@ -143,11 +144,11 @@ export function Schedule({
                           /Final|Jury|结题/.test(s.event) ? "event-final" : ""
                         }
                       />
-                      {s.event}
+                      {teachingLabel(s.event)}
                     </span>
                     <span className="session-status">
                       <Tag tone={s.status === "已完成" ? "done" : ""}>
-                        {s.status}
+                        {statusLabel(s.status)}
                       </Tag>
                       <ChevronRight size={15} />
                     </span>
@@ -213,7 +214,7 @@ export function WeekDetail({
         />
       </PageTitle>
       <div className="detail-meta">
-        <Tag tone="blue-tag">{s.event}</Tag>
+        <Tag tone="blue-tag">{teachingLabel(s.event)}</Tag>
         <button className="text-btn" onClick={() => go("project", p.id)}>
           {p.id} / {p.name} <ArrowUpRight size={14} />
         </button>
@@ -224,21 +225,21 @@ export function WeekDetail({
       </div>
       <div className="detail-columns">
         <div>
-          <SectionHead code="01" title="本周 Studio" />
+          <SectionHead code="01" title="本周工作室课程" />
           <div className="brief-block">
             <span className="eyebrow">OBJECTIVES / 教学目标</span>
-            <p>{s.objectives}</p>
+            <p>{teachingLabel(s.objectives)}</p>
           </div>
           <div className="brief-block">
             <span className="eyebrow">ASSIGNMENT / 当周任务</span>
-            <p>{s.task}</p>
+            <p>{teachingLabel(s.task)}</p>
           </div>
           <div className="brief-block">
             <span className="eyebrow">DELIVERABLES / 提交内容</span>
-            <p>{s.submission}</p>
+            <p>{teachingLabel(s.submission)}</p>
           </div>
           <button className="text-btn" onClick={openCrit}>
-            为本项目添加评图 <Plus size={15} />
+            为本项目添加作品讲评 <Plus size={15} />
           </button>
         </div>
         <div className="writing-panel">
@@ -368,10 +369,10 @@ export function ProjectDetail({
       )}
       <div className="project-tabs">
         {[
-          ["brief", "课题书", "Brief"],
+          ["brief", "创作任务书", "Brief"],
           ["process", "创作过程", "Process"],
           ["versions", "作品版本与档案", "Versions"],
-          ["crits", "评图记录", "Critique"],
+          ["crits", "作品讲评记录", "Reviews"],
         ].map(([key, cn, en]) => (
           <button
             className={tab === key ? "selected" : ""}
@@ -409,7 +410,7 @@ export function ProjectDetail({
                   onClick={() => setEditing(!editing)}
                 >
                   <Pencil size={13} />
-                  {editing ? "完成编辑" : "编辑课题"}
+                  {editing ? "完成编辑" : "编辑创作任务"}
                 </button>
               }
             />
@@ -422,17 +423,17 @@ export function ProjectDetail({
                 />
                 <Field
                   label="项目 Brief"
-                  value={p.brief}
+                  value={teachingLabel(p.brief)}
                   onChange={(brief) => update({ brief })}
                 />
                 <Field
                   label="创作限制"
-                  value={p.constraints}
+                  value={teachingLabel(p.constraints)}
                   onChange={(constraints) => update({ constraints })}
                 />
                 <Field
                   label="学习主题与技术"
-                  value={p.topics}
+                  value={teachingLabel(p.topics)}
                   onChange={(topics) => update({ topics })}
                 />
                 <Field
@@ -444,15 +445,15 @@ export function ProjectDetail({
             ) : (
               <>
                 <div className="brief-block">
-                  <p>{p.brief}</p>
+                  <p>{teachingLabel(p.brief)}</p>
                 </div>
                 <div className="brief-block">
                   <span className="eyebrow">CONSTRAINTS / 创作限制</span>
-                  <p>{p.constraints}</p>
+                  <p>{teachingLabel(p.constraints)}</p>
                 </div>
                 <div className="brief-block">
                   <span className="eyebrow">STUDY AREAS / 学习主题与技术</span>
-                  <p>{p.topics}</p>
+                  <p>{teachingLabel(p.topics)}</p>
                 </div>
                 {p.references && (
                   <div className="brief-block">
@@ -475,11 +476,11 @@ export function ProjectDetail({
                       {formatDate(s.date, { day: "2-digit", month: "short" })}
                     </span>
                   </div>
-                  <h3>{s.event}</h3>
+                  <h3>{teachingLabel(s.event)}</h3>
                   <p>{s.topic}</p>
                   <div>
                     <Tag tone={s.status === "已完成" ? "done" : ""}>
-                      {s.status}
+                      {statusLabel(s.status)}
                     </Tag>
                     <ArrowUpRight size={17} />
                   </div>
@@ -541,12 +542,12 @@ export function ProjectDetail({
       {tab === "crits" && (
         <section className="tab-content">
           <SectionHead
-            code="CRIT"
-            title="项目评图记录"
+            code="REVIEWS"
+            title="项目作品讲评记录"
             action={
               <button className="primary-btn" onClick={openCrit}>
                 <Plus size={15} />
-                新建评图
+                新建作品讲评
               </button>
             }
           />
@@ -633,20 +634,19 @@ export function Syllabus({
           </section>
           <section>
             <span className="eyebrow">03 / STUDIO METHOD</span>
-            <h2>Studio 教学方法</h2>
+            <h2>工作室课程与创作流程</h2>
             <p>
-              每个项目遵循 Brief → Exploration → Critique → Revision → Final
-              Review
-              的工作流程。通过参考研究、声音实验、作品版本与创作记录，呈现选择、修改与完成的过程。
+              每个项目从创作任务出发，通过参考作品试听、声音实验和工作室课程发展阶段作品；提交
+              Demo
+              后开展创作讲评，根据反馈修改，再以正式音频与创作陈述完成结题。作品版本与创作记录贯穿整个过程。
             </p>
             <p>
-              2026年12月20日为演出期弹性 Studio
-              周，安排自由制作、参考研究与素材整理。
+              2026年12月20日为演出期弹性工作室课程，安排自由制作、参考研究与素材整理。
             </p>
           </section>
           <section>
             <span className="eyebrow">04 / PROJECT SEQUENCE</span>
-            <h2>五个连续课题</h2>
+            <h2>五个连续创作项目</h2>
             {data.projects.map((p) => (
               <button
                 className="syllabus-project"
@@ -665,15 +665,15 @@ export function Syllabus({
             ))}
           </section>
           <section>
-            <span className="eyebrow">05 / CRITIQUE FRAMEWORK</span>
-            <h2>学期评图机制</h2>
+            <span className="eyebrow">05 / COMPOSITION REVIEWS</span>
+            <h2>学期作品讲评机制</h2>
             <p>
-              Concept Crit 讨论早期概念与探索；Midterm Crit
-              对结构、声音与发展方式进行专业批评；Final Crit
-              评审完整作品的创作意图、声音语言、制作完成度与复盘。
+              创作方案讨论：试听动机与声音草稿，明确创作意图；阶段试听与反馈：围绕
+              Demo
+              的节奏、声音设计、编曲结构与能量推进提出修改意见；作品结题讲评：完整试听成品，对照创作目标复盘制作选择。
             </p>
             <p>
-              评图关注具体证据与可执行修改，记录音频时间位置和版本，不使用数字化评分。所有评图由实际讨论产生，不预填评价。
+              作品讲评关注具体证据与可执行修改，记录音频时间位置和版本，不使用数字化评分。所有作品讲评由实际讨论产生，不预填评价。
             </p>
           </section>
           <section className="syllabus-final">
@@ -684,11 +684,12 @@ export function Syllabus({
               期末独立创作
             </h2>
             <p>
-              完全自主命题，不规定固定风格和长度。需提交完整的创作概念、正式作品、过程版本和最终评图。
+              完全自主命题，不规定固定风格和长度。需提交完整的创作概念、正式作品、过程版本和最终作品讲评。
             </p>
             <div className="mono">{stages.join(" → ")}</div>
             <strong>
-              FINAL JURY / {formatDate(data.sessions[15].date).toUpperCase()}
+              FINAL PRESENTATION /{" "}
+              {formatDate(data.sessions[15].date).toUpperCase()}
             </strong>
           </section>
           <section>

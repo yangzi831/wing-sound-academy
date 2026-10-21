@@ -1,3 +1,4 @@
+import { teachingLabel, isReviewEvent, statusLabel } from "./labels";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
@@ -45,7 +46,7 @@ const navs = [
   ["overview", "总览", "Overview"],
   ["schedule", "学期课表", "Schedule"],
   ["projects", "创作项目", "Projects"],
-  ["critique", "评图", "Critique"],
+  ["critique", "作品讲评", "Reviews"],
   ["archive", "创作档案", "Archive"],
   ["syllabus", "课程大纲", "Syllabus"],
 ];
@@ -161,7 +162,7 @@ export default function App() {
     setModal("artifact");
   };
   const upcoming = data.sessions
-    .filter((s) => s.date >= today && /Crit|Jury|结题|Proposal/.test(s.event))
+    .filter((s) => s.date >= today && isReviewEvent(s.event))
     .slice(0, 3);
   const completed = data.sessions.filter((s) => s.status === "已完成").length;
   const projectRange = (p: Project) => {
@@ -173,16 +174,18 @@ export default function App() {
       : "";
   };
   const removeCrit = (id: string) => {
-    if (confirm("删除这条评图记录？此操作可通过已有备份恢复。")) {
+    if (confirm("删除这条作品讲评记录？此操作可通过已有备份恢复。")) {
       setData((d) => ({
         ...d,
         critiques: d.critiques.filter((c) => c.id !== id),
       }));
-      setToast("评图记录已删除");
+      setToast("作品讲评记录已删除");
     }
   };
   const removeArtifact = async (a: Artifact) => {
-    if (!confirm("删除这份档案及其本地音频？关联评图会保留，版本关联将清除。"))
+    if (
+      !confirm("删除这份档案及其本地音频？关联作品讲评会保留，版本关联将清除。")
+    )
       return;
     setData((d) => ({
       ...d,
@@ -216,7 +219,7 @@ export default function App() {
               onClick={() => openCrit(c.projectId, c.id)}
             >
               <h3>
-                {c.type}
+                {teachingLabel(c.type)}
                 <ArrowUpRight size={18} />
               </h3>
               <p>{c.statement || "尚未填写创作者陈述"}</p>
@@ -226,11 +229,11 @@ export default function App() {
               </span>
             </button>
             <Tag tone={c.completed ? "done" : ""}>
-              {c.completed ? "评图完成" : "待整理"}
+              {c.completed ? "作品讲评完成" : "待整理"}
             </Tag>
             <button
               className="icon-btn"
-              aria-label="删除评图"
+              aria-label="删除作品讲评"
               onClick={() => removeCrit(c.id)}
             >
               <Trash2 size={16} />
@@ -240,15 +243,15 @@ export default function App() {
       </div>
     ) : (
       <Empty
-        code="CRIT / 00"
-        title="尚无评图记录"
+        code="REVIEWS / 00"
+        title="尚无作品讲评记录"
         text="从一次作品聆听开始，记录具体问题与下一步修改。"
         action={
           <button
             className="text-btn"
             onClick={() => openCrit(projectId || context)}
           >
-            添加评图 <Plus size={15} />
+            添加作品讲评 <Plus size={15} />
           </button>
         }
       />
@@ -492,7 +495,9 @@ export default function App() {
                           }
                         </h3>
                         <p>{clock.next.topic}</p>
-                        <Tag tone="outline">{clock.next.event}</Tag>
+                        <Tag tone="outline">
+                          {teachingLabel(clock.next.event)}
+                        </Tag>
                       </div>
                       <button
                         className="square-arrow"
@@ -507,7 +512,7 @@ export default function App() {
                   <Empty
                     code="END OF SEMESTER"
                     title="本学期课程已结束"
-                    text="可继续整理作品与评图；实际完成状态仍由你记录。"
+                    text="可继续整理作品和讲评记录；实际完成状态仍由你记录。"
                   />
                 )}
               </section>
@@ -518,7 +523,7 @@ export default function App() {
                     ? "FIRST PROJECT"
                     : "CURRENT PROJECT"}{" "}
                   <span>
-                    {clock.phase === "before" ? "首个课题" : "当前课题"}
+                    {clock.phase === "before" ? "首个创作项目" : "当前创作项目"}
                   </span>
                 </div>
                 <div className="project-current-body">
@@ -571,39 +576,52 @@ export default function App() {
                   <span className="help"> · 手动记录</span>
                 </span>
               </div>
-              <div className="timeline-projects">
-                {data.projects.map((p) => (
-                  <button
-                    key={p.id}
-                    style={{ gridColumn: `span ${p.weeks.length}` }}
-                    className={p.id === activeProject.id ? "is-current" : ""}
-                    onClick={() => go("project", p.id)}
-                  >
-                    <span className="mono">{p.id}</span>
-                    <span>{p.name}</span>
-                  </button>
-                ))}
+              <div
+                className="timeline-scroll"
+                role="region"
+                aria-label="16周课程时间轴，可横向滚动"
+                tabIndex={0}
+              >
+                <div className="timeline-projects">
+                  {data.projects.map((p) => (
+                    <button
+                      key={p.id}
+                      style={{ gridColumn: `span ${p.weeks.length}` }}
+                      className={p.id === activeProject.id ? "is-current" : ""}
+                      onClick={() => go("project", p.id)}
+                    >
+                      <span className="mono">{p.id}</span>
+                      <span>
+                        {p.cn}
+                        <small>{p.name}</small>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <div className="timeline-weeks">
+                  {data.sessions.map((s) => (
+                    <button
+                      key={s.id}
+                      title={`${s.id} ${s.topic} · ${statusLabel(s.status)}`}
+                      className={`${clock.next?.id === s.id ? "next" : ""} ${s.status === "已完成" ? "finished" : ""}`}
+                      onClick={() => go("week", s.id)}
+                    >
+                      <span className="mono">{s.id}</span>
+                      <i />
+                      <small>{s.date.slice(5).replace("-", ".")}</small>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="timeline-weeks">
-                {data.sessions.map((s) => (
-                  <button
-                    key={s.id}
-                    title={`${s.id} ${s.topic} · ${s.status}`}
-                    className={`${clock.next?.id === s.id ? "next" : ""} ${s.status === "已完成" ? "finished" : ""}`}
-                    onClick={() => go("week", s.id)}
-                  >
-                    <span className="mono">{s.id}</span>
-                    <i />
-                    <small>{s.date.slice(5).replace("-", ".")}</small>
-                  </button>
-                ))}
-              </div>
+              <p className="help timeline-hint">
+                左右滚动查看全部16周 · 点击周次查看课程，点击项目查看创作任务
+              </p>
             </section>
             <div className="overview-lower">
               <section>
                 <SectionHead
                   code="04"
-                  title="近期评图与节点"
+                  title="近期课程节点"
                   action={<span className="mono help">UPCOMING REVIEWS</span>}
                 />
                 {upcoming.length ? (
@@ -615,7 +633,7 @@ export default function App() {
                     >
                       <span className="mono upcoming-number">0{i + 1}</span>
                       <div>
-                        <h3>{s.event}</h3>
+                        <h3>{teachingLabel(s.event)}</h3>
                         <p>
                           {s.projectId} / {s.topic}
                         </p>
@@ -631,7 +649,7 @@ export default function App() {
                   <Empty
                     code="REVIEWS"
                     title="暂无后续节点"
-                    text="可在评图模块整理已完成的讨论。"
+                    text="可在作品讲评模块整理已完成的讨论。"
                   />
                 )}
               </section>
@@ -669,9 +687,9 @@ export default function App() {
                       onClick={() => openCrit(c.projectId, c.id)}
                     >
                       <span className="eyebrow">
-                        {c.projectId} / {c.type}
+                        {c.projectId} / {teachingLabel(c.type)}
                       </span>
-                      <h3>{c.statement || "评图记录"}</h3>
+                      <h3>{c.statement || "作品讲评记录"}</h3>
                       <p>{c.revisions || "尚未填写修改方向"}</p>
                     </button>
                   ) : (
@@ -702,7 +720,7 @@ export default function App() {
                 Independent Studio <span>期末独立创作</span>
               </h3>
               <span className="mono">
-                FINAL JURY
+                FINAL PRESENTATION
                 <br />
                 {formatDate(data.sessions[15].date).toUpperCase()}
               </span>
@@ -743,14 +761,14 @@ export default function App() {
             <PageTitle
               eyebrow="STUDIO 01 / PROJECT DIRECTORY"
               title="Studio projects"
-              cn="创作项目 / 五个连续的研究课题"
+              cn="创作项目 / 五个连续的音乐创作项目"
             >
               <Tag>PROJECT-BASED STUDIO</Tag>
             </PageTitle>
             <p className="page-intro">
               从微型动机到独立命题，逐步研究律动、声音材料与时间结构。
               <br />
-              Brief → Exploration → Critique → Revision → Final Review
+              参考试听 → 声音实验 → 作品提交 → 创作讲评 → 修改与结题
             </p>
             <div className="project-directory">
               {data.projects.map((p) => (
@@ -785,7 +803,7 @@ export default function App() {
                       className="text-btn"
                       onClick={() => go("project", p.id)}
                     >
-                      查看课题书 <ArrowRight size={14} />
+                      查看创作任务书 <ArrowRight size={14} />
                     </button>
                   </div>
                 </article>
@@ -823,26 +841,34 @@ export default function App() {
           <>
             <PageTitle
               eyebrow="STUDIO DIALOGUE / REVIEW RECORDS"
-              title="Studio critique"
-              cn="评图 / 从聆听、讨论到具体修改"
+              title="Composition reviews"
+              cn="作品讲评 / 从聆听、讨论到具体修改"
             >
               <button
                 className="primary-btn"
                 onClick={() => openCrit(critFilter || activeProject.id)}
               >
                 <Plus size={16} />
-                新建评图
+                新建作品讲评
               </button>
             </PageTitle>
             <div className="crit-explainer">
               {[
-                ["01", "Concept Crit", "讨论创作意图、早期方案与探索方向。"],
+                [
+                  "01",
+                  "创作方案讨论 / Concept Review",
+                  "讨论创作意图、早期方案与探索方向。",
+                ],
                 [
                   "02",
-                  "Midterm Crit",
+                  "阶段试听与反馈 / Work-in-Progress Review",
                   "检验结构、声音与发展方式，提出删减和重构。",
                 ],
-                ["03", "Final Crit", "评审完整作品、制作完成度与创作复盘。"],
+                [
+                  "03",
+                  "作品结题讲评 / Final Review",
+                  "评审完整作品、制作完成度与创作复盘。",
+                ],
               ].map(([n, t, d]) => (
                 <div key={n}>
                   <span className="mono blue">{n}</span>

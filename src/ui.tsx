@@ -1,3 +1,4 @@
+import { statusLabel } from "./labels";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { X } from "lucide-react";
@@ -82,7 +83,9 @@ export function StatusSelect({
         onChange={(e) => onChange(e.target.value as Status)}
       >
         {statuses.map((s) => (
-          <option key={s}>{s}</option>
+          <option key={s} value={s}>
+            {statusLabel(s)}
+          </option>
         ))}
       </select>
     </label>

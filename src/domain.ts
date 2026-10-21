@@ -1,11 +1,11 @@
 import type { Session } from "./types";
 export const statuses = ["未开始", "进行中", "待评图", "已完成"] as const;
 export const stages = [
-  "Project Proposal",
-  "Progress Review",
-  "Development",
-  "Pre-Final Review",
-  "Final Jury",
+  "创作立项",
+  "阶段试听与反馈",
+  "独立制作与深化",
+  "期末作品预评",
+  "作品展示与评审",
 ];
 export function localDate(date = new Date()) {
   return new Intl.DateTimeFormat("en-CA", {

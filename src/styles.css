@@ -8,7 +8,7 @@
   -webkit-font-smoothing: antialiased;
   --paper: #f1f2f3;
   --line: #d3d4d5;
-  --muted: #777879;
+  --muted: #565b63;
   --blue: #174bfa;
   --ink: #1b1c1e;
   --mono: "IBM Plex Mono", "Noto Sans SC", monospace;
@@ -85,20 +85,20 @@ h3 {
 }
 .mono {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
   letter-spacing: 0.015em;
 }
 .blue {
   color: var(--blue);
 }
 .help {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   line-height: 1.8;
 }
 .warning {
   color: #b4432d !important;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.8;
 }
 .preserve {
@@ -118,7 +118,7 @@ h3 {
 }
 .eyebrow {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.055em;
   line-height: 1.7;
@@ -156,7 +156,7 @@ h3 {
   position: relative;
 }
 .brand-reg {
-  font-size: 8px;
+  font-size: 14px;
   position: absolute;
   right: -10px;
   top: 0;
@@ -190,14 +190,14 @@ h3 {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-size: 12px;
+  font-size: 14px;
   position: relative;
   gap: 4px;
-  color: #737475;
+  color: #565b63;
   white-space: nowrap;
 }
 .nav small {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 450;
 }
 .nav a.active {
@@ -221,7 +221,7 @@ h3 {
   display: flex;
   gap: 8px;
   align-items: center;
-  font-size: 11px;
+  font-size: 14px;
   height: 30px;
   margin-left: 4px;
   white-space: nowrap;
@@ -235,12 +235,12 @@ h3 {
   align-items: center;
   border-bottom: 1px solid var(--line);
   gap: 50px;
-  font-size: 10px;
+  font-size: 14px;
   color: #616263;
   min-height: 43px;
 }
 .bar-separator {
-  color: #aaa;
+  color: #565b63;
   margin: 0 13px;
 }
 .bar-right {
@@ -248,7 +248,7 @@ h3 {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 9px;
+  font-size: 14px;
 }
 main {
   padding: 0 48px;
@@ -264,17 +264,17 @@ main {
 .hero-main > .eyebrow {
   display: flex;
   align-items: center;
-  font-size: 9px;
+  font-size: 14px;
 }
 .hero-main > .eyebrow span {
   margin-left: 20px;
   font-family: "Noto Sans SC", sans-serif;
-  font-size: 9px;
+  font-size: 14px;
   color: var(--muted);
   font-weight: 400;
 }
 .hero h1 {
-  font-size: clamp(54px, 6.9vw, 114px);
+  font-size: clamp(54px, 5.2vw, 88px);
   font-weight: 800;
   letter-spacing: -0.07em;
   line-height: 0.91;
@@ -289,18 +289,18 @@ main {
   justify-content: space-between;
 }
 .hero-bottom h2 {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 550;
   letter-spacing: -0.4px;
   margin: 7px 0 5px;
 }
 .hero-bottom p {
-  font-size: 11px;
-  color: #6a6b6c;
+  font-size: 16px;
+  color: #565b63;
   letter-spacing: 2px;
 }
 .hero-bottom .mono {
-  font-size: 10px;
+  font-size: 14px;
 }
 .round-arrow {
   width: 45px;
@@ -329,12 +329,12 @@ main {
   display: flex;
   justify-content: space-between;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 14px;
 }
 .hero-side-top b {
   color: var(--ink);
   font-weight: 450;
-  font-size: 10px;
+  font-size: 14px;
 }
 .signal {
   height: 150px;
@@ -377,8 +377,8 @@ main {
 .signal-axis {
   position: absolute;
   bottom: 0;
-  font-size: 7px;
-  color: #797a7b;
+  font-size: 14px;
+  color: #565b63;
   letter-spacing: 0.08em;
 }
 .hero-side-bottom {
@@ -388,9 +388,9 @@ main {
   gap: 8px;
 }
 .hero-side-bottom > .mono {
-  font-size: 9px;
+  font-size: 14px;
   line-height: 1.7;
-  color: #6e6f70;
+  color: #565b63;
 }
 .big16 {
   font-size: 60px;
@@ -403,7 +403,7 @@ main {
 }
 .big16 small {
   font-family: var(--mono);
-  font-size: 7px;
+  font-size: 14px;
   letter-spacing: 0.03em;
   line-height: 1.5;
   margin-top: 10px;
@@ -428,11 +428,11 @@ main {
   display: flex;
   justify-content: space-between;
   color: #666768;
-  font-size: 9px;
+  font-size: 14px;
 }
 .overview-top .eyebrow span {
   font-family: "Noto Sans SC", sans-serif;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 450;
   letter-spacing: 0;
 }
@@ -455,12 +455,12 @@ main {
 .next-date small {
   display: block;
   font-family: "Noto Sans SC", sans-serif;
-  color: #7b7c7d;
-  font-size: 10px;
+  color: #565b63;
+  font-size: 14px;
   margin-top: 10px;
 }
 .next-date .next-week {
-  font-size: 12px;
+  font-size: 14px;
   border: 1px solid var(--line);
   padding: 5px 8px;
   margin-left: auto;
@@ -477,7 +477,7 @@ main {
   font-weight: 550;
 }
 .next-title p {
-  font-size: 11px;
+  font-size: 16px;
   color: var(--muted);
   margin: 3px 0 12px;
 }
@@ -485,7 +485,7 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 9px;
+  font-size: 14px;
   font-weight: 450;
   line-height: 1.5;
   padding: 4px 7px;
@@ -498,7 +498,7 @@ main {
   background: none;
   color: #404142;
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 14px;
 }
 .tag.blue-tag {
   background: #e3e9ff;
@@ -529,7 +529,7 @@ main {
 .project-big {
   font-size: 64px;
   letter-spacing: -5px;
-  color: #999a9b;
+  color: #565b63;
   font-weight: 400;
   line-height: 1;
 }
@@ -539,13 +539,13 @@ main {
   margin: 9px 0 5px;
 }
 .project-current-body p {
-  font-size: 11px;
+  font-size: 16px;
   color: var(--muted);
 }
 .status-select {
   display: inline-flex;
   align-items: center;
-  font-size: 10px;
+  font-size: 14px;
   gap: 6px;
 }
 .status-select select {
@@ -553,7 +553,7 @@ main {
   border: none;
   outline: none;
   color: #555657;
-  font-size: 10px;
+  font-size: 14px;
   cursor: pointer;
   padding: 3px 14px 3px 0;
   max-width: 140px;
@@ -589,7 +589,7 @@ main {
   gap: 10px;
 }
 .current-bottom .mono {
-  font-size: 9px;
+  font-size: 14px;
 }
 .current-bottom .mono span {
   color: var(--muted);
@@ -599,7 +599,7 @@ main {
   align-items: center;
   justify-content: flex-start;
   gap: 7px;
-  font-size: 11px;
+  font-size: 14px;
   padding: 0;
   line-height: 1.6;
 }
@@ -614,15 +614,15 @@ main {
   gap: 15px;
 }
 .section-head h2 {
-  font-size: 13px;
+  font-size: 24px;
   font-weight: 550;
   display: flex;
   gap: 13px;
   align-items: center;
 }
 .section-head h2 > .mono {
-  color: #919293;
-  font-size: 10px;
+  color: #565b63;
+  font-size: 24px;
   font-weight: 450;
 }
 .timeline-section {
@@ -633,15 +633,15 @@ main {
   display: flex;
   justify-content: space-between;
   margin-bottom: 16px;
-  font-size: 10px;
-  color: #696a6b;
+  font-size: 14px;
+  color: #565b63;
 }
 .timeline-legend > .mono {
-  font-size: 9px;
+  font-size: 14px;
 }
 .timeline-legend b {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
   color: var(--ink);
 }
 .timeline-projects,
@@ -653,7 +653,7 @@ main {
 .timeline-projects button {
   border-top: 3px solid #a3a4a5;
   text-align: left;
-  font-size: 8px;
+  font-size: 14px;
   padding: 8px 7px 11px;
   background: #e8e9ea;
   display: flex;
@@ -663,7 +663,7 @@ main {
   white-space: nowrap;
 }
 .timeline-projects button > .mono {
-  font-size: 8px;
+  font-size: 14px;
 }
 .timeline-projects button > span:nth-child(2) {
   overflow: hidden;
@@ -681,8 +681,8 @@ main {
   align-items: center;
 }
 .timeline-weeks .mono {
-  font-size: 9px;
-  color: #68696a;
+  font-size: 14px;
+  color: #565b63;
 }
 .timeline-weeks i {
   height: 29px;
@@ -704,8 +704,8 @@ main {
 }
 .timeline-weeks small {
   font-family: var(--mono);
-  font-size: 8px;
-  color: #88898a;
+  font-size: 14px;
+  color: #565b63;
 }
 .timeline-weeks .next {
   background: #e5eaff;
@@ -743,7 +743,7 @@ main {
   padding-left: 32px;
 }
 .section-head .help {
-  font-size: 8px;
+  font-size: 14px;
 }
 .upcoming-row {
   display: flex;
@@ -756,16 +756,16 @@ main {
 }
 .upcoming-number {
   align-self: flex-start;
-  font-size: 9px;
-  color: #8d8e8f;
+  font-size: 14px;
+  color: #565b63;
 }
 .upcoming-row h3 {
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 550;
   margin-bottom: 3px;
 }
 .upcoming-row p {
-  font-size: 10px;
+  font-size: 16px;
   color: var(--muted);
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -774,15 +774,15 @@ main {
 }
 .upcoming-date {
   margin-left: auto;
-  font-size: 11px;
+  font-size: 14px;
   white-space: nowrap;
   text-align: right;
 }
 .upcoming-date small {
   display: block;
-  color: #909192;
+  color: #565b63;
   margin-top: 6px;
-  font-size: 9px;
+  font-size: 14px;
 }
 .upcoming-row:hover h3 {
   color: var(--blue);
@@ -795,22 +795,22 @@ main {
   font-family: var(--mono);
   font-size: 36px;
   line-height: 1;
-  color: #9e9fa0;
+  color: #565b63;
   margin-bottom: 15px;
 }
 .notes-empty h3 {
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 500;
   margin-bottom: 8px;
 }
 .notes-empty p {
-  font-size: 11px;
+  font-size: 16px;
   color: var(--muted);
   line-height: 1.9;
   margin-bottom: 18px;
 }
 .notes-empty .text-btn {
-  font-size: 10px;
+  font-size: 14px;
 }
 .note-preview {
   width: 100%;
@@ -823,7 +823,7 @@ main {
   overflow-wrap: anywhere;
 }
 .note-preview p {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--muted);
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -842,10 +842,10 @@ main {
   border-left: 3px solid var(--ink);
 }
 .jury-strip > .mono:first-child {
-  font-size: 8px;
+  font-size: 14px;
   max-width: 85px;
   line-height: 1.8;
-  color: #727374;
+  color: #565b63;
 }
 .jury-strip h3 {
   font-size: 21px;
@@ -854,15 +854,15 @@ main {
 }
 .jury-strip h3 span {
   display: block;
-  font-size: 10px;
+  font-size: 20px;
   font-weight: 450;
   letter-spacing: 0;
-  color: #777879;
+  color: #565b63;
   margin-top: 5px;
 }
 .jury-strip > .mono:nth-last-child(2) {
   margin-left: auto;
-  font-size: 9px;
+  font-size: 14px;
   line-height: 1.8;
 }
 .jury-strip:hover {
@@ -873,8 +873,8 @@ main {
   border-bottom: 1px solid var(--ink);
 }
 .page-title > .eyebrow {
-  color: #6a6b6c;
-  font-size: 9px;
+  color: #565b63;
+  font-size: 14px;
 }
 .page-title-row {
   display: flex;
@@ -884,14 +884,14 @@ main {
   margin-top: 16px;
 }
 .page-title h1 {
-  font-size: clamp(40px, 5.5vw, 75px);
+  font-size: clamp(36px, 4.2vw, 64px);
   font-weight: 550;
   letter-spacing: -0.065em;
   line-height: 1.04;
 }
 .page-title-row p {
-  font-size: 12px;
-  color: #737475;
+  font-size: 16px;
+  color: #565b63;
   margin-top: 15px;
 }
 .primary-btn,
@@ -902,11 +902,11 @@ main {
   gap: 9px;
   background: var(--blue);
   color: white;
-  font-size: 11px;
+  font-size: 14px;
   padding: 11px 16px;
   line-height: 1.6;
   white-space: nowrap;
-  min-height: 38px;
+  min-height: 44px;
 }
 .primary-btn:hover {
   background: #103bcf;
@@ -920,8 +920,8 @@ main {
   background: #e3e4e5;
 }
 .page-intro {
-  font-size: 12px;
-  color: #6a6b6c;
+  font-size: 16px;
+  color: #565b63;
   margin: 24px 0 30px;
   line-height: 2;
 }
@@ -939,8 +939,8 @@ main {
   letter-spacing: -3px;
 }
 .schedule-count span {
-  font-size: 8px;
-  color: #7b7c7d;
+  font-size: 14px;
+  color: #565b63;
 }
 .schedule-info {
   display: flex;
@@ -950,16 +950,16 @@ main {
 }
 .schedule-info > span {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 14px;
   white-space: nowrap;
 }
 .schedule-info p {
-  font-size: 10px;
-  color: #7f8081;
+  font-size: 16px;
+  color: #565b63;
 }
 .schedule-info > .text-btn {
   margin-left: auto;
-  font-size: 10px;
+  font-size: 14px;
   white-space: nowrap;
 }
 .schedule-table {
@@ -971,8 +971,8 @@ main {
   display: grid;
   grid-template-columns: 16% 13% 34% 25% 12%;
   padding: 12px 0;
-  color: #818283;
-  font-size: 8px;
+  color: #565b63;
+  font-size: 14px;
   border-bottom: 1px solid var(--line);
 }
 .schedule-table-head span:not(:first-child) {
@@ -1006,21 +1006,21 @@ main {
   padding-left: 13px;
 }
 .schedule-project h3 {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 550;
   letter-spacing: -0.4px;
   line-height: 1.15;
   padding-left: 13px;
 }
 .schedule-project p {
-  font-size: 10px;
-  color: #818283;
+  font-size: 16px;
+  color: #565b63;
   margin-top: 7px;
   padding-left: 13px;
 }
 .schedule-project small {
-  font-size: 8px;
-  color: #8b8c8d;
+  font-size: 14px;
+  color: #565b63;
   margin-top: 20px;
   padding-left: 13px;
 }
@@ -1057,16 +1057,16 @@ main {
   gap: 9px;
 }
 .session-date b {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 450;
 }
 .session-date small {
   font-family: var(--mono);
-  font-size: 9px;
-  color: #898a8b;
+  font-size: 14px;
+  color: #565b63;
 }
 .session-topic {
-  font-size: 12px;
+  font-size: 16px;
   line-height: 1.8;
   padding-right: 13px;
 }
@@ -1074,13 +1074,13 @@ main {
   display: block;
   min-height: 0;
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 16px;
   color: var(--blue);
   margin-top: 4px;
 }
 .session-event {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 14px;
   display: flex;
   gap: 7px;
   align-items: center;
@@ -1106,10 +1106,10 @@ main {
   gap: 4px;
 }
 .session-status svg {
-  color: #939495;
+  color: #565b63;
 }
 .session-status .tag {
-  font-size: 8px;
+  font-size: 14px;
   padding: 4px 6px;
 }
 .next-row {
@@ -1132,7 +1132,7 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 10px;
+  font-size: 14px;
   padding: 23px 0;
   border-bottom: 1px solid var(--line);
 }
@@ -1144,7 +1144,7 @@ main {
   gap: 8px;
 }
 .back-line button {
-  font-size: 10px;
+  font-size: 14px;
 }
 .back-line > div {
   gap: 20px;
@@ -1161,8 +1161,8 @@ main {
 }
 .detail-meta > .text-btn:last-child {
   margin-left: auto;
-  color: #78797a;
-  font-size: 10px;
+  color: #565b63;
+  font-size: 14px;
 }
 .detail-columns {
   display: grid;
@@ -1174,11 +1174,11 @@ main {
   margin-bottom: 28px;
 }
 .brief-block > .eyebrow {
-  font-size: 9px;
-  color: #797a7b;
+  font-size: 16px;
+  color: #565b63;
 }
 .brief-block p {
-  font-size: 13px;
+  font-size: 16px;
   white-space: pre-wrap;
   line-height: 2;
   margin-top: 9px;
@@ -1192,10 +1192,10 @@ main {
   flex-direction: column;
   gap: 9px;
   margin-bottom: 21px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .field > span {
-  font-size: 11px;
+  font-size: 14px;
   color: #5b5c5d;
   font-weight: 500;
   line-height: 1.6;
@@ -1208,7 +1208,7 @@ main {
   padding: 12px;
   background: #f8f9fa;
   color: #202122;
-  font-size: 12px;
+  font-size: 16px;
   outline: none;
   line-height: 1.9;
   min-height: 42px;
@@ -1224,8 +1224,8 @@ main {
 }
 .field textarea::placeholder,
 .field input::placeholder {
-  color: #9fa0a1;
-  font-size: 11px;
+  color: #565b63;
+  font-size: 16px;
 }
 .project-directory {
   border-top: 1px solid var(--ink);
@@ -1240,7 +1240,7 @@ main {
 .directory-code {
   font-size: 42px;
   letter-spacing: -3px;
-  color: #8b8c8d;
+  color: #565b63;
   min-width: 97px;
   line-height: 1.2;
 }
@@ -1250,8 +1250,8 @@ main {
   padding: 0;
 }
 .project-directory-title .eyebrow {
-  font-size: 8px;
-  color: #7b7c7d;
+  font-size: 14px;
+  color: #565b63;
 }
 .project-directory-title h2 {
   font-size: 31px;
@@ -1263,11 +1263,11 @@ main {
   margin: 10px 0 6px;
 }
 .project-directory-title p {
-  font-size: 11px;
-  color: #6e6f70;
+  font-size: 16px;
+  color: #565b63;
 }
 .project-directory-title .project-question {
-  font-size: 12px;
+  font-size: 14px;
   color: #535455;
   margin-top: 18px;
 }
@@ -1280,16 +1280,16 @@ main {
   justify-content: space-between;
 }
 .project-directory-meta small {
-  font-size: 9px;
-  color: #808182;
+  font-size: 14px;
+  color: #565b63;
 }
 .project-directory-meta .mono {
-  font-size: 10px;
+  font-size: 14px;
   margin-top: auto;
 }
 .project-directory-meta .text-btn {
   margin-top: 6px;
-  font-size: 10px;
+  font-size: 14px;
 }
 .project-directory-row:hover .project-directory-title h2 {
   color: var(--blue);
@@ -1305,8 +1305,8 @@ main {
   padding: 35px 0 0;
 }
 .project-hero > .eyebrow {
-  color: #7c7d7e;
-  font-size: 9px;
+  color: #565b63;
+  font-size: 14px;
 }
 .project-title-row {
   display: flex;
@@ -1318,7 +1318,7 @@ main {
   font-size: 90px;
   font-weight: 400;
   letter-spacing: -7px;
-  color: #999a9b;
+  color: #565b63;
   line-height: 1;
 }
 .project-title-row h1 {
@@ -1328,9 +1328,9 @@ main {
   line-height: 1.1;
 }
 .project-title-row p {
-  font-size: 13px;
+  font-size: 16px;
   letter-spacing: 1px;
-  color: #707172;
+  color: #565b63;
   margin-top: 15px;
 }
 .project-hero-arrow {
@@ -1343,10 +1343,10 @@ main {
   border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
   padding: 15px 0;
-  font-size: 10px;
+  font-size: 14px;
 }
 .project-hero-meta > .mono {
-  font-size: 10px;
+  font-size: 14px;
 }
 .project-hero-meta > .status-select {
   margin-left: auto;
@@ -1361,18 +1361,18 @@ main {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 12px;
+  font-size: 14px;
   padding: 16px 0;
   position: relative;
-  color: #767778;
+  color: #565b63;
 }
 .project-tabs button > span {
   font-family: var(--mono);
-  font-size: 9px;
-  color: #939495;
+  font-size: 14px;
+  color: #565b63;
 }
 .project-tabs button > small {
-  font-size: 8px;
+  font-size: 14px;
   border: 1px solid var(--line);
   padding: 1px 4px;
 }
@@ -1398,8 +1398,8 @@ main {
   border-bottom: 1px solid var(--line);
 }
 .research-question > .eyebrow {
-  font-size: 9px;
-  color: #7a7b7c;
+  font-size: 14px;
+  color: #565b63;
 }
 .research-question h2 {
   font-size: 24px;
@@ -1421,17 +1421,17 @@ main {
 .milestone-panel > button > .mono {
   display: flex;
   justify-content: space-between;
-  color: #7d7e7f;
-  font-size: 9px;
+  color: #565b63;
+  font-size: 14px;
 }
 .milestone-panel h3 {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
   margin: 12px 0 6px;
 }
 .milestone-panel p {
-  font-size: 11px;
-  color: #7d7e7f;
+  font-size: 16px;
+  color: #565b63;
   margin-bottom: 16px;
 }
 .milestone-panel > button > div:last-child {
@@ -1494,16 +1494,16 @@ main {
   gap: 15px;
 }
 .final-stages > button > .mono {
-  font-size: 12px;
+  font-size: 14px;
   color: #808182;
   min-height: 17px;
 }
 .final-stages strong {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
 }
 .final-stages small {
-  font-size: 9px;
+  font-size: 14px;
   color: #898a8b;
 }
 .final-stages > button.checked {
@@ -1525,17 +1525,17 @@ main {
   padding-left: 30px;
 }
 .crit-explainer .mono {
-  font-size: 10px;
+  font-size: 14px;
 }
 .crit-explainer h3 {
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 500;
   letter-spacing: -0.5px;
   margin: 13px 0 8px;
 }
 .crit-explainer p {
-  font-size: 11px;
-  color: #797a7b;
+  font-size: 16px;
+  color: #565b63;
 }
 .filter-bar {
   display: flex;
@@ -1549,12 +1549,12 @@ main {
   padding: 7px 12px;
   border: 1px solid var(--line);
   font-family: var(--mono);
-  font-size: 10px;
-  color: #767778;
+  font-size: 14px;
+  color: #565b63;
 }
 .filter-bar button span {
   font-family: "Noto Sans SC", sans-serif;
-  font-size: 10px;
+  font-size: 14px;
   margin-left: 5px;
 }
 .filter-bar button.selected {
@@ -1570,18 +1570,18 @@ main {
   border-top: 1px solid var(--line);
 }
 .empty-code {
-  color: #898a8b;
-  font-size: 10px;
+  color: #565b63;
+  font-size: 14px;
   min-width: 100px;
 }
 .empty h3 {
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 500;
   margin-bottom: 12px;
 }
 .empty p {
-  font-size: 12px;
-  color: #7c7d7e;
+  font-size: 16px;
+  color: #565b63;
   max-width: 500px;
 }
 .empty .text-btn {
@@ -1595,8 +1595,8 @@ main {
   align-items: flex-start;
 }
 .crit-date {
-  font-size: 10px;
-  color: #777879;
+  font-size: 14px;
+  color: #565b63;
   min-width: 110px;
   padding-top: 5px;
 }
@@ -1618,7 +1618,7 @@ main {
   margin-bottom: 10px;
 }
 .crit-content p {
-  font-size: 12px;
+  font-size: 16px;
   white-space: pre-wrap;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1636,7 +1636,7 @@ main {
   width: 30px;
   height: 30px;
   padding: 4px;
-  color: #78797a;
+  color: #565b63;
 }
 .icon-btn:hover {
   background: #e0e1e2;
@@ -1654,7 +1654,7 @@ main {
   align-items: center;
 }
 .storage-notice p {
-  font-size: 10px;
+  font-size: 16px;
   color: #676869;
   flex: 1;
 }
@@ -1662,7 +1662,7 @@ main {
   font-weight: 600;
 }
 .storage-notice .text-btn {
-  font-size: 10px;
+  font-size: 14px;
   white-space: nowrap;
 }
 .artifact-grid {
@@ -1684,8 +1684,8 @@ main {
   gap: 8px;
 }
 .artifact-top > .mono {
-  font-size: 8px;
-  color: #88898a;
+  font-size: 14px;
+  color: #565b63;
 }
 .artifact-top > div {
   display: flex;
@@ -1695,10 +1695,10 @@ main {
   align-items: center;
   gap: 13px;
   margin: 22px 0;
-  color: #6a6b6c;
+  color: #565b63;
 }
 .artifact-mark > .mono {
-  font-size: 9px;
+  font-size: 14px;
 }
 .artifact h3 {
   font-size: 20px;
@@ -1708,13 +1708,13 @@ main {
   margin-bottom: 13px;
 }
 .artifact p {
-  font-size: 12px;
-  color: #78797a;
+  font-size: 16px;
+  color: #565b63;
   line-height: 1.9;
   margin-bottom: 20px;
 }
 .artifact .text-btn {
-  font-size: 10px;
+  font-size: 14px;
   margin-bottom: 18px;
 }
 audio {
@@ -1732,8 +1732,8 @@ audio::-webkit-media-controls-panel {
   display: flex;
   gap: 10px;
   justify-content: space-between;
-  font-size: 8px;
-  color: #88898a;
+  font-size: 14px;
+  color: #565b63;
 }
 .artifact-foot > span:first-child {
   overflow-wrap: anywhere;
@@ -1753,8 +1753,8 @@ audio::-webkit-media-controls-panel {
   padding-right: 35px;
 }
 .syllabus-index > .eyebrow {
-  font-size: 9px;
-  color: #828384;
+  font-size: 14px;
+  color: #565b63;
 }
 .syllabus-index h2 {
   font-family: "Barlow Condensed", Arial, sans-serif;
@@ -1764,20 +1764,20 @@ audio::-webkit-media-controls-panel {
   margin: 17px 0;
 }
 .syllabus-index > p {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
 }
 .syllabus-index dl {
   margin: 30px 0;
 }
 .syllabus-index dt {
-  font-size: 9px;
-  color: #8e8f90;
+  font-size: 14px;
+  color: #565b63;
   margin-top: 25px;
 }
 .syllabus-index dd {
   margin: 8px 0 0;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.9;
 }
 .syllabus-body section {
@@ -1786,8 +1786,8 @@ audio::-webkit-media-controls-panel {
   margin-bottom: 30px;
 }
 .syllabus-body section > .eyebrow {
-  font-size: 9px;
-  color: #828384;
+  font-size: 14px;
+  color: #565b63;
 }
 .syllabus-body section > h2 {
   font-size: 25px;
@@ -1795,7 +1795,7 @@ audio::-webkit-media-controls-panel {
   margin: 17px 0 20px;
 }
 .syllabus-body section > p {
-  font-size: 13px;
+  font-size: 16px;
   line-height: 2.1;
   margin-top: 14px;
 }
@@ -1805,7 +1805,7 @@ audio::-webkit-media-controls-panel {
   flex-wrap: wrap;
 }
 .study-tags .tag {
-  font-size: 11px;
+  font-size: 14px;
   padding: 7px 10px;
 }
 .syllabus-project {
@@ -1818,13 +1818,13 @@ audio::-webkit-media-controls-panel {
   gap: 22px;
 }
 .syllabus-project h3 {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
   margin-bottom: 6px;
 }
 .syllabus-project p {
-  font-size: 10px;
-  color: #838485;
+  font-size: 16px;
+  color: #565b63;
 }
 .syllabus-project > svg {
   margin-left: auto;
@@ -1843,14 +1843,14 @@ audio::-webkit-media-controls-panel {
   letter-spacing: -1px;
 }
 .syllabus-final > .mono {
-  font-size: 10px;
+  font-size: 14px;
   color: #a9aaab;
   line-height: 2;
   margin: 25px 0;
 }
 .syllabus-final > strong {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 450;
 }
 .syllabus-body section > .text-btn {
@@ -1863,8 +1863,8 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 9px;
-  color: #808182;
+  font-size: 14px;
+  color: #565b63;
 }
 footer > div {
   display: flex;
@@ -1872,26 +1872,26 @@ footer > div {
   gap: 22px;
 }
 .footer-brand {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.3px;
 }
 footer .mono {
-  font-size: 8px;
+  font-size: 14px;
 }
 footer button {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 9px;
+  font-size: 14px;
   padding: 0;
 }
 .save-state {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 9px;
+  font-size: 14px;
 }
 .save-state i {
   width: 4px;
@@ -1903,7 +1903,7 @@ footer button {
   padding: 15px 48px;
   background: #e4e5e6;
   color: #a04d24;
-  font-size: 12px;
+  font-size: 14px;
   display: flex;
   justify-content: space-between;
   gap: 15px;
@@ -1919,7 +1919,7 @@ footer button {
   display: flex;
   gap: 12px;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
   z-index: 100;
   box-shadow: 0 4px 25px #0002;
   max-width: 90vw;
@@ -1954,7 +1954,7 @@ footer button {
   gap: 15px;
 }
 .dialog-head h2 {
-  font-size: 15px;
+  font-size: 24px;
   font-weight: 500;
 }
 .dialog-body {
@@ -1986,7 +1986,7 @@ footer button {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 12px;
+  font-size: 14px;
   margin: 10px 0 16px;
 }
 .checkbox-line input {
@@ -2001,14 +2001,14 @@ footer button {
   background: #e7e8e9;
 }
 .file-drop input {
-  font-size: 11px;
+  font-size: 14px;
   padding: 6px;
   background: transparent;
   border: none;
 }
 .file-drop small {
-  font-size: 10px;
-  color: #838485;
+  font-size: 14px;
+  color: #565b63;
   line-height: 1.7;
 }
 .backup-heading h3 {
@@ -2017,8 +2017,8 @@ footer button {
   margin: 18px 0 15px;
 }
 .backup-heading p {
-  font-size: 12px;
-  color: #7a7b7c;
+  font-size: 16px;
+  color: #565b63;
   line-height: 2;
 }
 .backup-stats {
@@ -2028,8 +2028,8 @@ footer button {
   border-bottom: 1px solid var(--line);
   padding: 22px 0;
   margin: 25px 0 5px;
-  font-size: 10px;
-  color: #7a7b7c;
+  font-size: 14px;
+  color: #565b63;
 }
 .backup-stats b {
   font-family: var(--mono);
@@ -2048,20 +2048,20 @@ footer button {
   border-bottom: 1px solid var(--line);
 }
 .backup-option h3 {
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 500;
   margin-bottom: 7px;
 }
 .backup-option p {
-  font-size: 11px;
-  color: #828384;
+  font-size: 16px;
+  color: #565b63;
   line-height: 1.9;
 }
 .backup-option > div {
   flex: 1;
 }
 .backup-option > svg:first-child {
-  color: #747576;
+  color: #565b63;
   margin-top: 4px;
 }
 .backup-option:hover h3 {
@@ -2090,7 +2090,7 @@ footer button {
     margin: 35px 0 37px;
   }
   .hero-bottom h2 {
-    font-size: 20px;
+    font-size: 24px;
   }
   .hero-side {
     padding-left: 37px;
@@ -2136,10 +2136,10 @@ footer button {
     gap: 40px;
   }
   .nav a {
-    font-size: 13px;
+    font-size: 14px;
   }
   .nav small {
-    font-size: 11px;
+    font-size: 14px;
   }
   footer {
     margin-left: 64px;
@@ -2182,14 +2182,14 @@ footer button {
     font-size: 8vw;
   }
   .hero-bottom h2 {
-    font-size: 14px;
+    font-size: 24px;
   }
   .hero-side-top {
     flex-direction: column;
     gap: 8px;
   }
   .hero-side-bottom > .mono {
-    font-size: 8px;
+    font-size: 14px;
   }
   .big16 {
     font-size: 52px;
@@ -2202,7 +2202,7 @@ footer button {
     align-items: flex-end;
   }
   .big16 small {
-    font-size: 6px;
+    font-size: 14px;
   }
   .project-current-body {
     gap: 20px;
@@ -2211,17 +2211,17 @@ footer button {
     font-size: 56px;
   }
   .project-current-body h3 {
-    font-size: 18px;
+    font-size: 20px;
   }
   .next-title h3 {
-    font-size: 19px;
+    font-size: 20px;
   }
   .timeline-projects button {
     padding-left: 5px;
     padding-right: 5px;
   }
   .timeline-projects button > span:nth-child(2) {
-    font-size: 7px;
+    font-size: 14px;
   }
   .schedule-table-head {
     grid-template-columns: 17% 13% 32% 25% 13%;
@@ -2236,16 +2236,16 @@ footer button {
     padding-left: 10px;
   }
   .session-topic {
-    font-size: 10px;
+    font-size: 16px;
   }
   .session-date small {
-    font-size: 8px;
+    font-size: 14px;
   }
   .session-event {
-    font-size: 8px;
+    font-size: 14px;
   }
   .schedule-project h3 {
-    font-size: 14px;
+    font-size: 20px;
   }
   .schedule-info {
     flex-wrap: wrap;
@@ -2260,7 +2260,7 @@ footer button {
     grid-template-columns: 1.3fr 1fr;
   }
   .research-question h2 {
-    font-size: 21px;
+    font-size: 24px;
   }
   .artifact-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2280,7 +2280,7 @@ footer button {
     margin-right: 30px;
   }
   .jury-strip h3 {
-    font-size: 18px;
+    font-size: 20px;
   }
 }
 @media (max-width: 760px) {
@@ -2291,7 +2291,7 @@ footer button {
     position: relative;
   }
   .brand {
-    font-size: 13px;
+    font-size: 14px;
   }
   .brand-symbol {
     height: 28px;
@@ -2326,7 +2326,7 @@ footer button {
   }
   .nav a {
     padding: 16px;
-    font-size: 12px;
+    font-size: 14px;
   }
   .nav a.active:after {
     bottom: 6px;
@@ -2337,12 +2337,12 @@ footer button {
   }
   .semester-bar {
     padding: 11px 20px;
-    font-size: 9px;
+    font-size: 14px;
     justify-content: space-between;
     gap: 10px;
   }
   .semester-bar > .mono {
-    font-size: 9px;
+    font-size: 14px;
   }
   .bar-separator {
     margin: 0 6px;
@@ -2362,7 +2362,7 @@ footer button {
     gap: 0;
   }
   .hero-main > .eyebrow {
-    font-size: 7px;
+    font-size: 14px;
   }
   .hero h1 {
     font-size: clamp(49px, 12.8vw, 93px);
@@ -2370,14 +2370,14 @@ footer button {
     margin: 26px 0;
   }
   .hero-bottom h2 {
-    font-size: 14px;
+    font-size: 24px;
     max-width: 270px;
   }
   .hero-bottom .mono {
-    font-size: 9px;
+    font-size: 14px;
   }
   .hero-bottom p {
-    font-size: 10px;
+    font-size: 16px;
     letter-spacing: 1.4px;
   }
   .round-arrow {
@@ -2433,7 +2433,6 @@ footer button {
     min-width: 560px;
   }
   .timeline-section {
-    overflow-x: auto;
     scrollbar-width: thin;
   }
   .timeline-section > .section-head,
@@ -2448,7 +2447,7 @@ footer button {
     white-space: nowrap;
   }
   .timeline-legend .mono {
-    font-size: 8px;
+    font-size: 14px;
   }
   .timeline-legend > .help {
     display: none;
@@ -2457,13 +2456,13 @@ footer button {
     display: none;
   }
   .timeline-projects button > .mono {
-    font-size: 9px;
+    font-size: 14px;
   }
   .timeline-projects button {
     padding-left: 7px;
   }
   .timeline-weeks small {
-    font-size: 7px;
+    font-size: 14px;
   }
   .overview-lower {
     grid-template-columns: 1fr;
@@ -2481,10 +2480,10 @@ footer button {
     padding: 19px 0;
   }
   .upcoming-row h3 {
-    font-size: 14px;
+    font-size: 20px;
   }
   .upcoming-date {
-    font-size: 10px;
+    font-size: 14px;
   }
   .jury-strip {
     gap: 13px;
@@ -2495,7 +2494,7 @@ footer button {
   .jury-strip > .mono:first-child {
     max-width: 100%;
     width: 100%;
-    font-size: 8px;
+    font-size: 14px;
   }
   .jury-strip h3 {
     font-size: 20px;
@@ -2504,7 +2503,7 @@ footer button {
   }
   .jury-strip > .mono:nth-last-child(2) {
     margin-left: 0;
-    font-size: 8px;
+    font-size: 14px;
     margin-top: 8px;
   }
   .jury-strip > svg {
@@ -2528,24 +2527,24 @@ footer button {
     width: 100%;
   }
   .page-title-row p {
-    font-size: 11px;
+    font-size: 16px;
     line-height: 1.9;
     margin-top: 12px;
   }
   .page-title-row > .tag {
-    font-size: 8px;
+    font-size: 14px;
   }
   .schedule-count {
     display: none;
   }
   .schedule-info > span {
-    font-size: 9px;
+    font-size: 14px;
   }
   .schedule-info .text-btn {
-    font-size: 9px;
+    font-size: 14px;
   }
   .schedule-info p {
-    font-size: 9px;
+    font-size: 16px;
   }
   .schedule-table-head {
     display: none;
@@ -2572,18 +2571,18 @@ footer button {
     display: none;
   }
   .schedule-project h3 {
-    font-size: 15px;
+    font-size: 20px;
     padding: 0;
   }
   .schedule-project p {
-    font-size: 9px;
+    font-size: 16px;
     padding: 0;
     margin: 0;
   }
   .schedule-project small {
     padding: 0;
     margin: 0 0 0 auto;
-    font-size: 7px;
+    font-size: 14px;
     white-space: nowrap;
   }
   .session-row {
@@ -2602,13 +2601,13 @@ footer button {
     padding-top: 3px;
   }
   .session-date b {
-    font-size: 12px;
+    font-size: 14px;
   }
   .session-date small {
-    font-size: 7px;
+    font-size: 14px;
   }
   .session-topic {
-    font-size: 11px;
+    font-size: 16px;
     padding-right: 7px;
     grid-column: 2/4;
     line-height: 1.8;
@@ -2616,7 +2615,7 @@ footer button {
   .session-event {
     grid-column: 2;
     grid-row: 2;
-    font-size: 8px;
+    font-size: 14px;
   }
   .session-status {
     grid-column: 3;
@@ -2625,17 +2624,17 @@ footer button {
     gap: 7px;
   }
   .session-topic small {
-    font-size: 7px;
+    font-size: 16px;
   }
   .back-line {
     padding: 18px 0;
-    font-size: 9px;
+    font-size: 14px;
   }
   .back-line > .mono {
-    font-size: 9px;
+    font-size: 14px;
   }
   .back-line button {
-    font-size: 9px;
+    font-size: 14px;
   }
   .back-line > div {
     gap: 14px;
@@ -2659,10 +2658,10 @@ footer button {
     margin-left: 0;
   }
   .detail-meta > .text-btn {
-    font-size: 10px;
+    font-size: 14px;
   }
   .brief-block p {
-    font-size: 12px;
+    font-size: 16px;
   }
   .project-directory-row {
     flex-wrap: wrap;
@@ -2686,10 +2685,10 @@ footer button {
     width: 19px;
   }
   .project-directory-title .eyebrow {
-    font-size: 7px;
+    font-size: 14px;
   }
   .project-directory-title .project-question {
-    font-size: 11px;
+    font-size: 14px;
     margin-top: 14px;
   }
   .project-directory-meta {
@@ -2702,18 +2701,18 @@ footer button {
     flex-wrap: wrap;
   }
   .project-directory-meta .mono {
-    font-size: 8px;
+    font-size: 14px;
     margin-top: 0;
   }
   .project-directory-meta small {
     display: none;
   }
   .project-directory-meta .text-btn {
-    font-size: 9px;
+    font-size: 14px;
     margin: 0 0 0 auto;
   }
   .page-intro {
-    font-size: 11px;
+    font-size: 16px;
   }
   .project-hero {
     padding-top: 28px;
@@ -2733,7 +2732,7 @@ footer button {
     letter-spacing: -1.5px;
   }
   .project-title-row p {
-    font-size: 11px;
+    font-size: 16px;
     margin-top: 12px;
   }
   .project-hero-arrow {
@@ -2743,10 +2742,10 @@ footer button {
     gap: 14px;
     flex-wrap: wrap;
     padding: 13px 0;
-    font-size: 9px;
+    font-size: 14px;
   }
   .project-hero-meta > .mono {
-    font-size: 9px;
+    font-size: 14px;
   }
   .project-hero-meta > .status-select {
     margin-left: auto;
@@ -2755,8 +2754,8 @@ footer button {
     order: 3;
     flex-basis: 100%;
     font-family: var(--mono);
-    font-size: 8px;
-    color: #828384;
+    font-size: 14px;
+    color: #565b63;
   }
   .project-tabs {
     gap: 20px;
@@ -2765,7 +2764,7 @@ footer button {
     margin-top: 12px;
   }
   .project-tabs button {
-    font-size: 10px;
+    font-size: 14px;
     gap: 5px;
     padding: 17px 0;
   }
@@ -2773,16 +2772,16 @@ footer button {
     display: none;
   }
   .project-tabs button > small {
-    font-size: 7px;
+    font-size: 14px;
   }
   .project-brief {
     gap: 30px;
   }
   .research-question h2 {
-    font-size: 21px;
+    font-size: 24px;
   }
   .research-question > .eyebrow {
-    font-size: 8px;
+    font-size: 14px;
   }
   .milestone-panel {
     border-left: none;
@@ -2817,10 +2816,10 @@ footer button {
     min-width: 20px;
   }
   .final-stages strong {
-    font-size: 10px;
+    font-size: 14px;
   }
   .final-stages small {
-    font-size: 8px;
+    font-size: 14px;
     margin-left: auto;
   }
   .crit-explainer {
@@ -2837,11 +2836,11 @@ footer button {
   }
   .crit-explainer h3 {
     margin: 0;
-    font-size: 17px;
+    font-size: 20px;
   }
   .crit-explainer p {
     grid-column: 2;
-    font-size: 10px;
+    font-size: 16px;
   }
   .crit-explainer .mono {
     padding-top: 3px;
@@ -2852,7 +2851,7 @@ footer button {
     margin-bottom: 20px;
   }
   .filter-bar button {
-    font-size: 9px;
+    font-size: 14px;
     padding: 7px 10px;
   }
   .filter-bar button span {
@@ -2865,16 +2864,16 @@ footer button {
     min-height: 220px;
   }
   .empty-code {
-    font-size: 9px;
+    font-size: 14px;
   }
   .empty h3 {
     font-size: 20px;
   }
   .empty p {
-    font-size: 11px;
+    font-size: 16px;
   }
   .empty .text-btn {
-    font-size: 10px;
+    font-size: 14px;
   }
   .crit-row {
     gap: 14px;
@@ -2888,7 +2887,7 @@ footer button {
     display: flex;
     gap: 15px;
     align-items: center;
-    font-size: 8px;
+    font-size: 14px;
     padding: 0;
   }
   .crit-date span {
@@ -2901,13 +2900,13 @@ footer button {
     font-size: 20px;
   }
   .crit-content p {
-    font-size: 11px;
+    font-size: 16px;
   }
   .crit-row > .tag {
     position: absolute;
     right: 42px;
     top: 16px;
-    font-size: 8px;
+    font-size: 14px;
   }
   .crit-row > .icon-btn {
     position: absolute;
@@ -2924,7 +2923,7 @@ footer button {
     margin-top: 4px;
   }
   .storage-notice p {
-    font-size: 9px;
+    font-size: 16px;
   }
   .artifact-grid {
     grid-template-columns: 1fr;
@@ -2934,7 +2933,7 @@ footer button {
     padding: 18px;
   }
   .artifact-top > .mono {
-    font-size: 8px;
+    font-size: 14px;
   }
   .artifact h3 {
     font-size: 24px;
@@ -2943,7 +2942,7 @@ footer button {
     margin: 18px 0;
   }
   .artifact p {
-    font-size: 12px;
+    font-size: 16px;
   }
   .syllabus-layout {
     grid-template-columns: 1fr;
@@ -2971,23 +2970,23 @@ footer button {
   .syllabus-index dd {
     grid-column: 2;
     margin-top: 20px;
-    font-size: 10px;
+    font-size: 14px;
   }
   .syllabus-body section > h2 {
-    font-size: 23px;
+    font-size: 24px;
   }
   .syllabus-body section > p {
-    font-size: 12px;
+    font-size: 16px;
   }
   .syllabus-project {
     gap: 14px;
     padding: 18px 0;
   }
   .syllabus-project h3 {
-    font-size: 17px;
+    font-size: 20px;
   }
   .syllabus-project p {
-    font-size: 9px;
+    font-size: 16px;
   }
   .syllabus-final {
     padding: 25px !important;
@@ -2996,7 +2995,7 @@ footer button {
     font-size: 30px !important;
   }
   .study-tags .tag {
-    font-size: 10px;
+    font-size: 14px;
   }
   footer {
     margin: 35px 20px 0;
@@ -3014,14 +3013,14 @@ footer button {
     text-align: right;
   }
   .footer-brand {
-    font-size: 8px;
+    font-size: 14px;
   }
   footer .mono {
-    font-size: 7px;
+    font-size: 14px;
   }
   footer button,
   .save-state {
-    font-size: 8px;
+    font-size: 14px;
   }
   .dialog {
     width: calc(100% - 20px);
@@ -3031,7 +3030,7 @@ footer button {
     padding: 15px 18px;
   }
   .dialog-head h2 {
-    font-size: 13px;
+    font-size: 24px;
   }
   .dialog-body {
     padding: 20px 18px;
@@ -3041,54 +3040,54 @@ footer button {
     gap: 10px;
   }
   .dialog-foot > .help {
-    font-size: 9px;
+    font-size: 14px;
   }
   .dialog-foot .primary-btn {
-    font-size: 10px;
+    font-size: 14px;
     padding: 10px 14px;
   }
   .form-grid {
     gap: 0 12px;
   }
   .field > span {
-    font-size: 10px;
+    font-size: 14px;
   }
   .field input,
   .field select,
   .field textarea {
-    font-size: 14px;
+    font-size: 16px;
     padding: 10px;
   }
   .field textarea::placeholder,
   .field input::placeholder {
-    font-size: 11px;
+    font-size: 16px;
   }
   .backup-heading h3 {
     font-size: 21px;
   }
   .backup-heading p {
-    font-size: 11px;
+    font-size: 16px;
   }
   .backup-stats b {
     font-size: 21px;
   }
   .backup-stats {
-    font-size: 9px;
+    font-size: 14px;
   }
   .backup-option {
     gap: 15px;
   }
   .backup-option p {
-    font-size: 10px;
+    font-size: 16px;
   }
   .error-banner {
     padding: 12px 20px;
-    font-size: 10px;
+    font-size: 14px;
     flex-direction: column;
     gap: 8px;
   }
   .toast {
-    font-size: 11px;
+    font-size: 14px;
     bottom: 20px;
     width: max-content;
     max-width: calc(100% - 30px);
@@ -3108,4 +3107,674 @@ footer button {
 }
 .session-row {
   flex: 1;
+}
+/* Reading hierarchy and responsive spacing, shared by every course view. */
+body {
+  font-size: 16px;
+  line-height: 1.65;
+}
+button,
+input,
+select,
+textarea {
+  line-height: 1.6;
+}
+button,
+a,
+input,
+select,
+textarea,
+p,
+h1,
+h2,
+h3 {
+  overflow-wrap: anywhere;
+}
+.hero,
+.overview-top,
+.overview-lower,
+.detail-columns,
+.project-brief,
+.project-title-row,
+.page-title-row,
+.syllabus-layout {
+  min-width: 0;
+}
+.hero > *,
+.overview-top > *,
+.overview-lower > *,
+.detail-columns > *,
+.project-title-row > *,
+.page-title-row > *,
+.syllabus-layout > * {
+  min-width: 0;
+}
+.nav a {
+  font-size: 16px;
+  min-height: 48px;
+}
+.nav small {
+  font-size: 14px;
+}
+.header-tool,
+.text-btn,
+.filter-bar button,
+.status-select select,
+.back-line button,
+footer button {
+  min-height: 40px;
+}
+.icon-btn {
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+}
+.primary-btn,
+.secondary-btn {
+  min-height: 44px;
+  font-size: 16px;
+  white-space: normal;
+}
+.tag {
+  white-space: normal;
+}
+.hero {
+  padding-top: 28px;
+  padding-bottom: 26px;
+}
+.hero h1 {
+  margin: 22px 0;
+}
+.hero .signal {
+  height: 110px;
+  margin: 14px 0;
+}
+.hero-bottom h2 {
+  font-size: 24px;
+}
+.hero-bottom p {
+  letter-spacing: 0.5px;
+}
+.hero-main > .eyebrow {
+  flex-wrap: wrap;
+}
+.eyebrow {
+  letter-spacing: 0.025em;
+}
+.brand-reg,
+.signal-axis,
+.big16 small,
+.section-head h2 > .mono {
+  font-size: 12px;
+}
+.section-head h2 {
+  font-size: 26px;
+  line-height: 1.4;
+}
+.next-session,
+.current-project {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.next-date {
+  margin: 16px 0;
+}
+.project-current-body {
+  margin: 24px 0;
+}
+.next-title h3,
+.project-current-body h3 {
+  font-size: 24px;
+}
+.current-bottom {
+  flex-wrap: wrap;
+}
+.next-title {
+  gap: 16px;
+}
+.next-title > div {
+  min-width: 0;
+}
+.square-arrow {
+  flex-shrink: 0;
+}
+.timeline-scroll {
+  overflow-x: auto;
+  padding-bottom: 12px;
+  scrollbar-color: #686e7a #dce0e5;
+}
+.timeline-scroll:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+.timeline-projects,
+.timeline-weeks {
+  min-width: 1664px;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+}
+.timeline-projects button {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 12px 8px;
+  min-height: 112px;
+  white-space: normal;
+  overflow: visible;
+  font-size: 16px;
+}
+.timeline-projects button > .mono {
+  font-size: 14px;
+}
+.timeline-projects button > span:nth-child(2) {
+  display: block;
+  overflow: visible;
+  white-space: normal;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.timeline-projects small {
+  display: block;
+  font-size: 14px;
+  color: #565b63;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.timeline-weeks button {
+  min-height: 112px;
+  padding: 12px 4px;
+}
+.timeline-weeks .mono,
+.timeline-weeks small {
+  font-size: 16px;
+  color: #40464e;
+}
+.timeline-weeks i {
+  height: 24px;
+}
+.timeline-hint {
+  margin-top: 8px;
+}
+.upcoming-row {
+  align-items: flex-start;
+}
+.upcoming-row h3 {
+  font-size: 20px;
+  line-height: 1.5;
+}
+.upcoming-row p {
+  -webkit-line-clamp: 2;
+  font-size: 16px;
+}
+.upcoming-number {
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+.upcoming-row > div {
+  min-width: 0;
+}
+.upcoming-date {
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+.jury-strip {
+  gap: 24px;
+}
+.jury-strip > .mono:first-child {
+  max-width: 135px;
+}
+.page-title-row p,
+.brief-block p,
+.syllabus-body section > p,
+.artifact p,
+.notes-empty p,
+.note-preview p,
+.crit-content p {
+  font-size: 16px;
+}
+.page-title {
+  padding-top: 32px;
+}
+.schedule-table-head {
+  grid-template-columns: 17% 13% 32% 26% 12%;
+}
+.schedule-group {
+  grid-template-columns: 17% minmax(0, 1fr);
+}
+.schedule-group > div {
+  min-width: 0;
+}
+.session-row {
+  grid-template-columns: 15.66% 38.55% 31.33% 14.46%;
+  min-height: 128px;
+  padding: 20px 0;
+}
+.session-row > span {
+  min-width: 0;
+}
+.session-topic {
+  font-size: 16px;
+}
+.session-event {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.session-event i {
+  flex-shrink: 0;
+}
+.session-date b {
+  font-size: 16px;
+}
+.session-date small {
+  font-size: 14px;
+}
+.session-status {
+  gap: 4px;
+  padding-right: 8px;
+}
+.schedule-project h3 {
+  font-size: 22px;
+  line-height: 1.3;
+}
+.schedule-project p {
+  font-size: 16px;
+}
+.project-directory-title h2 {
+  font-size: 28px;
+}
+.project-directory-meta {
+  min-width: 200px;
+}
+.project-tabs {
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.project-tabs button {
+  min-height: 48px;
+  font-size: 16px;
+}
+.project-tabs button > span {
+  font-size: 14px;
+}
+.final-stages strong {
+  font-size: 16px;
+  line-height: 1.7;
+}
+.final-stages small {
+  font-size: 14px;
+}
+.final-hero .eyebrow,
+.jury-project p,
+.jury-project small,
+.syllabus-final > .eyebrow,
+.syllabus-final > .mono {
+  color: #c8ccd2 !important;
+}
+.final-stages small,
+.final-stages > button > .mono {
+  color: #565b63;
+}
+.crit-explainer h3 {
+  font-size: 22px;
+  line-height: 1.5;
+}
+.field input,
+.field select,
+.field textarea {
+  font-size: 16px;
+  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+}
+.field textarea::placeholder,
+.field input::placeholder {
+  font-size: 16px;
+  color: #666b73;
+  opacity: 1;
+}
+.field > span {
+  font-size: 14px;
+  color: #40464e;
+}
+.form-grid > * {
+  min-width: 0;
+}
+.dialog-head h2 {
+  font-size: 24px;
+  line-height: 1.5;
+}
+.dialog-foot {
+  flex-wrap: wrap;
+}
+.checkbox-line {
+  font-size: 16px;
+  min-height: 44px;
+}
+.checkbox-line input {
+  width: 18px;
+  height: 18px;
+}
+.backup-stats {
+  flex-wrap: wrap;
+}
+.syllabus-body section > h2 {
+  font-size: 28px;
+}
+.syllabus-project h3 {
+  font-size: 22px;
+}
+.syllabus-project p {
+  font-size: 16px;
+}
+@media (min-width: 1450px) {
+  .hero {
+    padding-top: 28px;
+    padding-bottom: 26px;
+  }
+  .hero h1 {
+    font-size: 88px;
+  }
+  .project-current-body {
+    margin: 24px 0;
+  }
+  .timeline-section {
+    padding-top: 26px;
+    padding-bottom: 24px;
+  }
+  .header .nav {
+    gap: 30px;
+  }
+}
+@media (max-width: 1250px) and (min-width: 761px) {
+  .header {
+    flex-wrap: wrap;
+    padding-top: 18px;
+    gap: 12px;
+  }
+  .header-tool {
+    margin-left: auto;
+  }
+  .nav {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+    gap: 16px;
+  }
+  .nav a {
+    padding: 12px 0;
+  }
+  .semester-bar {
+    flex-wrap: wrap;
+    gap: 10px 24px;
+  }
+  .hero h1 {
+    font-size: clamp(52px, 6.5vw, 78px);
+  }
+  .hero-bottom {
+    gap: 16px;
+  }
+  .hero-side-bottom {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .project-current-body {
+    gap: 18px;
+  }
+  .jury-strip {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 1100px) {
+  .schedule-table-head {
+    display: none;
+  }
+  .schedule-group {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+  .session-row {
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 12px 0;
+  }
+  .session-date {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .session-topic {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .session-event {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .session-status {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+  .detail-columns,
+  .project-brief {
+    gap: 28px;
+  }
+  .overview-lower {
+    grid-template-columns: 1fr;
+  }
+  .overview-lower > section:first-child {
+    padding-right: 0;
+  }
+  .overview-lower > .studio-notes {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+  }
+  .project-directory-meta {
+    min-width: 170px;
+  }
+  .final-stages {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .hero h1 {
+    font-size: clamp(46px, 12vw, 78px);
+  }
+  .hero-bottom h2 {
+    font-size: 24px;
+  }
+  .hero-bottom p {
+    font-size: 16px;
+  }
+  .hero-bottom .mono {
+    font-size: 14px;
+  }
+  .header-tool {
+    width: 40px;
+  }
+  .nav a {
+    padding: 12px;
+    font-size: 16px;
+  }
+  .nav.open {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    top: 100%;
+  }
+  .semester-bar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .overview-top {
+    grid-template-columns: 1fr;
+  }
+  .current-project {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+  }
+  .next-session {
+    padding-right: 0;
+  }
+  .section-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .section-head h2 {
+    font-size: 24px;
+  }
+  .timeline-section {
+    overflow: visible;
+  }
+  .timeline-legend {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .jury-strip {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px;
+  }
+  .jury-strip > .mono:nth-last-child(2) {
+    margin-left: 0;
+  }
+  .jury-strip h3 {
+    font-size: 24px;
+  }
+  .page-title-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .page-title h1 {
+    font-size: clamp(36px, 10vw, 54px);
+  }
+  .schedule-group {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .schedule-project {
+    border-right: 0;
+    padding: 18px;
+  }
+  .schedule-project > .mono,
+  .schedule-project h3,
+  .schedule-project p,
+  .schedule-project small {
+    padding-left: 0;
+  }
+  .schedule-project small {
+    margin-top: 8px;
+  }
+  .session-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 20px 12px;
+  }
+  .session-row > span {
+    padding-left: 0;
+  }
+  .session-date {
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  .session-topic {
+    grid-column: 1;
+    grid-row: 2;
+    padding-right: 0;
+    font-size: 16px;
+  }
+  .session-event {
+    grid-column: 1;
+    grid-row: 3;
+    font-size: 14px;
+  }
+  .session-status {
+    grid-column: 1;
+    grid-row: 4;
+    justify-content: space-between;
+  }
+  .project-directory-title h2 {
+    font-size: 24px;
+  }
+  .project-directory-meta {
+    padding-left: 0;
+    min-width: 0;
+  }
+  .project-directory-meta .text-btn {
+    margin-left: 0;
+  }
+  .project-title-row {
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .project-title-row h1 {
+    font-size: 36px;
+  }
+  .project-title-row p {
+    font-size: 16px;
+  }
+  .project-tabs {
+    flex-wrap: nowrap;
+    gap: 24px;
+  }
+  .project-tabs button {
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+  .final-stages {
+    grid-template-columns: 1fr;
+  }
+  .final-stages > button {
+    flex-wrap: wrap;
+  }
+  .final-stages small {
+    margin-left: 35px;
+  }
+  .crit-explainer h3 {
+    font-size: 22px;
+  }
+  .crit-row > .tag {
+    position: static;
+  }
+  .crit-content {
+    flex-basis: 100%;
+  }
+  .crit-date {
+    padding-right: 45px;
+    flex-wrap: wrap;
+  }
+  .crit-row {
+    gap: 16px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .dialog-head {
+    gap: 10px;
+  }
+  .dialog-head h2 {
+    font-size: 22px;
+  }
+  .dialog-foot .primary-btn {
+    font-size: 16px;
+  }
+  .backup-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .backup-option {
+    flex-wrap: wrap;
+  }
+  footer {
+    flex-wrap: wrap;
+  }
+  footer > div:last-child {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.final-hero .project-hero-meta > span:nth-child(2) {
+  color: #c8ccd2;
 }

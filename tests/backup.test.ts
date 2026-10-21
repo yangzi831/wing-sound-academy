@@ -32,7 +32,8 @@ describe("完整音频备份与恢复", () => {
   it("跨存储恢复文字、状态、评图关联和音频原始字节", async () => {
     const d = createInitialData();
     d.sessions[0].notes = "真实的测试笔记";
-    d.sessions[0].status = "已完成";
+    d.sessions[0].status = "待评图";
+    d.sessions[0].event = "Concept Crit";
     const fileId = crypto.randomUUID();
     const bytes = new Uint8Array([82, 73, 70, 70, 0, 1, 2, 3, 255]);
     await audioStore("put", fileId, new Blob([bytes], { type: "audio/wav" }));
@@ -69,7 +70,10 @@ describe("完整音频备份与恢复", () => {
     await audioStore("delete", fileId);
     const restored = await readBackup(JSON.stringify(backup));
     expect(restored.sessions[0].notes).toBe("真实的测试笔记");
-    expect(restored.sessions[0].status).toBe("已完成");
+    expect(restored.sessions[0].status).toBe("待评图");
+    expect(restored.sessions[0].event).toBe("Concept Crit");
+    expect(restored.critiques[0]).toEqual(d.critiques[0]);
+    expect(restored.projects).toEqual(d.projects);
     expect(restored.critiques[0].versionId).toBe("a1");
     expect(restored.artifacts[0].fileId).not.toBe(fileId);
     const blob = await audioStore("get", restored.artifacts[0].fileId!);

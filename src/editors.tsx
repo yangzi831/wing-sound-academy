@@ -1,3 +1,4 @@
+import { teachingLabel } from "./labels";
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Check, Upload, Download, HardDrive, ArrowUpRight } from "lucide-react";
@@ -45,7 +46,7 @@ export function CritEditor({
   };
   return (
     <Modal
-      title={`${id ? "编辑" : "新建"}评图 / Studio Critique`}
+      title={`${id ? "编辑" : "新建"}作品讲评 / Composition Review`}
       onClose={close}
       wide
     >
@@ -71,7 +72,7 @@ export function CritEditor({
             </select>
           </label>
           <label className="field">
-            <span>评图类型</span>
+            <span>作品讲评类型</span>
             <select
               value={c.type}
               onChange={(e) =>
@@ -79,12 +80,14 @@ export function CritEditor({
               }
             >
               {["Concept Crit", "Midterm Crit", "Final Crit"].map((t) => (
-                <option key={t}>{t}</option>
+                <option key={t} value={t}>
+                  {teachingLabel(t).split(" / ")[0]}
+                </option>
               ))}
             </select>
           </label>
           <label className="field">
-            <span>评图日期</span>
+            <span>作品讲评日期</span>
             <input
               required
               type="date"
@@ -157,7 +160,7 @@ export function CritEditor({
             checked={c.completed}
             onChange={(e) => patch({ completed: e.target.checked })}
           />
-          评图已完成
+          作品讲评已完成
         </label>
       </div>
       <div className="dialog-foot">
@@ -457,7 +460,7 @@ export function BackupDialog({
             <b>{data.artifacts.length}</b> 档案
           </span>
           <span>
-            <b>{data.critiques.length}</b> 评图
+            <b>{data.critiques.length}</b> 作品讲评
           </span>
         </div>
         {recovery && (
@@ -483,7 +486,7 @@ export function BackupDialog({
           <div>
             <h3>导出完整备份</h3>
             <p>
-              课程配置、进度、笔记、评图、档案与本地音频。音频嵌入
+              课程配置、进度、笔记、作品讲评、档案与本地音频。音频嵌入
               JSON，大文件生成可能需要片刻。
             </p>
           </div>
@@ -576,7 +579,7 @@ export function SessionEditor({
           </label>
           {[
             ["topic", "课程内容"],
-            ["event", "评图 / 教学节点"],
+            ["event", "作品讲评 / 教学节点"],
             ["objectives", "教学目标"],
             ["task", "当周任务"],
             ["submission", "提交内容"],
@@ -584,7 +587,7 @@ export function SessionEditor({
             <Field
               key={key}
               label={label}
-              value={draft[key as keyof Session] as string}
+              value={teachingLabel(draft[key as keyof Session] as string)}
               onChange={(v) => patch({ [key]: v })}
               rows={key === "topic" ? 2 : 3}
             />
