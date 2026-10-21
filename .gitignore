@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.local
+playwright-report/
+test-results/
+*.tsbuildinfo
+.playwright-cli/
+output/playwright/*-backup.json
