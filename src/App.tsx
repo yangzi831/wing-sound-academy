@@ -1,3 +1,4 @@
+import { ProjectArtwork, StudioArtwork, projectAccent } from "./artwork";
 import { teachingLabel, isReviewEvent, statusLabel } from "./labels";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -24,7 +25,6 @@ import {
   Empty,
   StatusSelect,
   SectionHead,
-  Signal,
   AudioPlayer,
   PageTitle,
   go,
@@ -261,7 +261,18 @@ export default function App() {
     return items.length ? (
       <div className="artifact-grid">
         {items.map((a) => (
-          <article key={a.id} className="artifact">
+          <article
+            key={a.id}
+            className="artifact"
+            data-project={a.projectId}
+            style={projectAccent(a.projectId)}
+          >
+            {a.kind === "音频版本" && (
+              <div className="artifact-cover">
+                <ProjectArtwork id={a.projectId} decorative />
+                <span className="mono">{a.projectId} / 项目视觉</span>
+              </div>
+            )}
             <div className="artifact-top">
               <span className="mono">
                 {a.projectId} / {a.kind}
@@ -298,7 +309,12 @@ export default function App() {
             </div>
             <h3>{a.title}</h3>
             <p className="preserve">{a.note || "未添加说明"}</p>
-            {a.kind === "音频版本" && <AudioPlayer artifact={a} />}
+            {a.kind === "音频版本" && (
+              <div className="artifact-player">
+                <span className="eyebrow">AUDIO / 作品试听</span>
+                <AudioPlayer artifact={a} />
+              </div>
+            )}
             {a.url && (
               <a
                 className="text-btn"
@@ -447,23 +463,7 @@ export default function App() {
                   </button>
                 </div>
               </div>
-              <div className="hero-side">
-                <div className="hero-side-top mono">
-                  <span>ACADEMIC YEAR</span>
-                  <b>{data.semester.year}</b>
-                </div>
-                <Signal />
-                <div className="hero-side-bottom">
-                  <span className="mono">
-                    SEMESTER 01
-                    <br />
-                    AUTUMN — WINTER
-                  </span>
-                  <span className="big16">
-                    16<small>SESSIONS / SUNDAY</small>
-                  </span>
-                </div>
-              </div>
+              <StudioArtwork />
             </section>
             <div className="overview-top">
               <section className="next-session">
@@ -527,7 +527,14 @@ export default function App() {
                   </span>
                 </div>
                 <div className="project-current-body">
-                  <span className="project-big mono">{activeProject.id}</span>
+                  <button
+                    className="current-artwork-link"
+                    onClick={() => go("project", activeProject.id)}
+                    aria-label={`查看 ${activeProject.id} ${activeProject.name}`}
+                  >
+                    <ProjectArtwork id={activeProject.id} decorative eager />
+                    <span className="mono">{activeProject.id}</span>
+                  </button>
                   <div>
                     <StatusSelect
                       label="首页项目状态"
@@ -574,6 +581,12 @@ export default function App() {
                 <span>
                   课程完成 <b>{completed}</b> / 16{" "}
                   <span className="help"> · 手动记录</span>
+                  <progress
+                    className="semester-progress"
+                    value={completed}
+                    max={data.sessions.length}
+                    aria-label="学期课程完成进度"
+                  />
                 </span>
               </div>
               <div
@@ -775,13 +788,24 @@ export default function App() {
                 <article
                   key={p.id}
                   className={`project-directory-row ${p.id === "P04" ? "final-project" : ""}`}
+                  data-project={p.id}
+                  style={projectAccent(p.id)}
                 >
-                  <span className="directory-code mono">{p.id}</span>
+                  <button
+                    className="directory-cover"
+                    onClick={() => go("project", p.id)}
+                    aria-label={`查看 ${p.id} ${p.name}`}
+                  >
+                    <ProjectArtwork id={p.id} decorative />
+                    <span className="cover-index mono">{p.id}</span>
+                  </button>
                   <button
                     className="project-directory-title"
                     onClick={() => go("project", p.id)}
                   >
-                    <span className="eyebrow">{p.direction}</span>
+                    <span className="eyebrow">
+                      <span className="project-id">{p.id}</span> {p.direction}
+                    </span>
                     <h2>
                       {p.name} <ArrowUpRight size={25} />
                     </h2>

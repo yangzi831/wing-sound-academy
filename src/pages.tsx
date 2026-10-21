@@ -1,3 +1,4 @@
+import { ProjectArtwork, projectAccent } from "./artwork";
 import { teachingLabel, statusLabel } from "./labels";
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
@@ -98,11 +99,17 @@ export function Schedule({
           <span>STATUS</span>
         </div>
         {data.projects.map((p) => (
-          <div className="schedule-group" key={p.id}>
+          <div
+            className="schedule-group"
+            key={p.id}
+            data-project={p.id}
+            style={projectAccent(p.id)}
+          >
             <button
               className={`schedule-project ${p.id === "P04" ? "jury-project" : ""}`}
               onClick={() => go("project", p.id)}
             >
+              <ProjectArtwork id={p.id} className="schedule-cover" decorative />
               <span className="mono">
                 {p.id} <ArrowUpRight size={17} />
               </span>
@@ -317,20 +324,27 @@ export function ProjectDetail({
         </a>
         <span className="mono">PROJECT BRIEF / {p.id}</span>
       </div>
-      <section className={`project-hero ${p.id === "P04" ? "final-hero" : ""}`}>
-        <div className="eyebrow">
-          {p.id === "P04"
-            ? "FINAL PROJECT / INDEPENDENT RESEARCH"
-            : p.direction}
-        </div>
-        <div className="project-title-row">
-          <span className="project-outline mono">{p.id}</span>
-          <div>
-            <h1>{p.name}</h1>
-            <p>{p.cn}</p>
+      <section
+        className={`project-hero ${p.id === "P04" ? "final-hero" : ""}`}
+        data-project={p.id}
+        style={projectAccent(p.id)}
+      >
+        <div className="project-hero-intro">
+          <div className="eyebrow">
+            {p.id === "P04"
+              ? "FINAL PROJECT / INDEPENDENT RESEARCH"
+              : p.direction}
           </div>
-          <ArrowUpRight className="project-hero-arrow" size={48} />
+          <div className="project-title-row">
+            <span className="project-outline mono">{p.id}</span>
+            <div>
+              <h1>{p.name}</h1>
+              <p>{p.cn}</p>
+            </div>
+            <ArrowUpRight className="project-hero-arrow" size={48} />
+          </div>
         </div>
+        <ProjectArtwork id={p.id} className="project-theme" eager />
         <div className="project-hero-meta">
           <span className="mono">
             W{String(p.weeks[0]).padStart(2, "0")} — W
