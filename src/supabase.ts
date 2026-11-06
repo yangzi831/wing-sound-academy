@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { invitationRedirect } from "./auth-invitation";
 
 const env = import.meta.env;
 const url = env.VITE_SUPABASE_URL?.trim();
@@ -38,4 +39,5 @@ export const supabase = cloudConfigured
     })
   : null;
 // No hash route in callback: Supabase consumes the auth hash before App mounts.
-export const authCallback = () => location.origin + location.pathname;
+export const authCallback = () =>
+  invitationRedirect(location.origin + location.pathname, sessionStorage);

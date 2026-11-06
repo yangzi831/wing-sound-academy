@@ -34,34 +34,13 @@ import { audioStore, repository, setBackupAudioResolver } from "./storage";
 import { BUCKET, checkAudio, digest, getAudio } from "./cloud-audio";
 import type { Artifact } from "./types";
 import { equal } from "./sync-model";
+import { finishInvitation, readPendingInvitation } from "./auth-invitation";
 
 let callbackPromise: Promise<void> | undefined;
-async function finishInvitation() {
-  const params = new URLSearchParams(location.search),
-    token = params.get("token_hash"),
-    type = params.get("type");
-  const invitation = params.get("invitation"),
-    ticket = params.get("ticket");
-  if (!invitation || !ticket) return;
-  // Strip email credentials from URL before rendering or navigating.
-  history.replaceState(null, "", location.pathname + location.hash);
-  const pending = { invitation, ticket };
-  sessionStorage.setItem("wing-pending-invitation", JSON.stringify(pending));
-  if (token && (type === "invite" || type === "magiclink")) {
-    const { error } = await supabase!.auth.verifyOtp({
-      token_hash: token,
-      type,
-    });
-    if (error)
-      throw new Error(
-        "邮箱确认链接已失效或已使用。可用同一受邀邮箱登录后再接受；或请管理员重发邀请。",
-      );
-  }
-}
 async function acceptPending() {
-  const raw = sessionStorage.getItem("wing-pending-invitation");
-  if (!raw) return;
-  const { invitation, ticket } = JSON.parse(raw);
+  const pending = readPendingInvitation(sessionStorage);
+  if (!pending) return;
+  const { invitation, ticket } = pending;
   await academyRPC("academy_accept_invitation", {
     p_id: invitation,
     p_hash: await digest(new Blob([ticket])),
@@ -91,7 +70,11 @@ export default function AcademyRoot() {
   useEffect(() => {
     if (!supabase) return;
     let active = true;
-    callbackPromise ||= finishInvitation();
+    callbackPromise ||= finishInvitation(supabase.auth, {
+      location,
+      history,
+      storage: sessionStorage,
+    });
     void callbackPromise
       .catch((e) => {
         if (active) setError(e.message);

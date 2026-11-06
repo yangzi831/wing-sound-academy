@@ -1,3 +1,14 @@
+# 2026-11-06 Supabase Auth SMTP 邀请调整
+
+- 邀请函数移除独立邮件API及发信域名依赖。新用户/未确认账号使用 Auth Admin 的 inviteUserByEmail；已有已确认账号使用 shouldCreateUser=false 的OTP/Magic Link。两条路径均由Supabase Auth的SMTP发信，没有自动确认邮箱或开放公众注册。
+- 保留原学院数据库和邀请RPC，无新增SQL。原有邮箱绑定、票据哈希、过期、重发旋转、撤销、权限及移除成员的数据库测试继续适用。
+- 邀请专项 **19项测试通过**：新用户/已有用户、SMTP拒绝/限流、状态写入失败、权限拒绝、重发新票据、真实Supabase SDK在两种SMTP请求中完整编码redirect_to、shouldCreateUser=false、非PKCE的跨设备链接、旧token_hash兼容、等待SDK读取回调后清理URL、失败后保留票据、后续登录邮件及新标签页保留邀请参数。
+- 已提供可粘贴的Invite user和Magic Link邮件模板，以及Gmail两步验证、应用专用密码、SMTP、Redirect URLs和函数重新部署说明。凭据只在Supabase后台保存。
+- **未实际发送Gmail邮件、未修改真实SMTP或重新部署远端Edge Function**；测试中的邮件/Auth网络边界为模拟响应，不能代替真实邮箱收信与加入验收。配置完成后需分别使用新用户和已有账号确认完整回调及加入流程。
+- 下方较早的Resend测试与部署说明属于历史记录，以本节和README现行SMTP步骤为准。
+
+---
+
 # 2026-11-06 学院、多课程与双人记录升级验证
 
 本次基于现有项目增量实现，原始 migration、课程默认数据与旧备份模型保留。下方第一版记录属于历史，不代表本次云服务部署状态。

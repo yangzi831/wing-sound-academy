@@ -55,25 +55,39 @@
 **Authentication → URL Configuration**：
 
 - Site URL：`https://yangzi831.github.io/wing-sound-academy/`
-- Redirect URLs：精确加入同一地址；开发需要时加入 `http://127.0.0.1:5173/` 和 `http://127.0.0.1:4173/`。
+- Redirect URLs：保留精确根地址，并增加 `https://yangzi831.github.io/wing-sound-academy/**`，仅允许固定域名下本项目路径与动态邀请查询参数；不使用通配域名。开发需要时另加 `http://127.0.0.1:5173/**` 和 `http://127.0.0.1:4173/**`。缺少这项匹配可能使 Auth 回退到 Site URL，丢失邀请参数。
 - **Sign In / Providers**：启用 Email；保持关闭公众注册和匿名登录。普通登录发送 OTP 时 `shouldCreateUser: false`。
-- Magic Link 邮件模板保留 `{{ .Token }}`，使已受邀账号能在页面输入验证码登录。会话持久化、自动刷新，不要求每次打开重新登录。
+- 保持 Email 的 **Confirm email** 开启；Invite user 与 Magic Link 邮件模板按下一节配置。Magic Link 同时提供 `{{ .ConfirmationURL }}` 和 `{{ .Token }}`，既能点击验证，也能在页面输入验证码。会话持久化、自动刷新，不要求每次打开重新登录。
 
-### 3. 一次性配置邀请邮件
+### 3. 一次性配置 Gmail SMTP（无需自有域名）
 
-邀请使用 **Edge Function → Resend API**，不依赖浏览器发信或人工复制 Supabase 团队邀请。需准备 Resend 账号、验证自己的发信域名并设置域名 DNS，再创建仅发信所需的 API Key。
+邀请与日常登录统一使用 **Supabase Auth → 后台配置的 SMTP → Gmail**。Edge Function 不连接第三方邮件 API，不读取 Gmail 密码；不需要自有域名、DNS 验证、Resend 账号或 API Key。
 
-在 **Supabase Dashboard → Edge Functions → Secrets** 添加：
+1. 打开发信 Gmail 的 [Google 账号安全设置](https://myaccount.google.com/security)，启用「两步验证」。
+2. 打开 [应用专用密码](https://myaccount.google.com/apppasswords)，创建名为「WING SOUND ACADEMY / Supabase」的密码。Google 生成16位应用专用密码；**不要使用 Gmail 日常登录密码**。此密码只填写到下述 Supabase SMTP Password 字段，不发到聊天，不放进前端、GitHub Variables、仓库或 Edge Function Secrets。
+3. 打开 **Supabase Dashboard → 现有项目 → Authentication → Email → SMTP Settings**（不同后台版本也可能在 Project Settings → Authentication → SMTP Settings），启用 **Custom SMTP**，填写：
 
-| Secret           | 内容                                                                         |
-| ---------------- | ---------------------------------------------------------------------------- |
-| `RESEND_API_KEY` | Resend 服务端发信 API Key                                                    |
-| `INVITE_FROM`    | 已验证域名发件地址，如 `WING SOUND ACADEMY <academy@你的域名>`，请填真实地址 |
-| `SITE_URL`       | `https://yangzi831.github.io/wing-sound-academy/`                            |
+| 字段 | 内容 |
+| --- | --- |
+| Sender email | 你用于发信的完整 Gmail 地址 |
+| Sender name | WING SOUND ACADEMY |
+| Host | smtp.gmail.com |
+| Port | 465（SSL/TLS）；如选择587则使用 STARTTLS |
+| Username | 同一个完整 Gmail 地址 |
+| Password | Google 生成的16位应用专用密码，复制时去掉显示用空格 |
 
-`SUPABASE_URL`、`SUPABASE_ANON_KEY`、`SUPABASE_SERVICE_ROLE_KEY` 使用 Edge Runtime 的服务端环境，不写进仓库、Pages 或任何 `VITE_*` 变量。Resend 的测试发件域可能只能发往账号本人，邀请朋友前应验证自己的域名。
+发件地址与认证 Gmail 保持一致，不填虚构的 academy@自有域名。若没有应用专用密码入口，检查两步验证是否开启，以及高级保护或单位账号策略是否限制。修改 Google 主密码可能撤销已有应用专用密码，届时重新生成并更新 Supabase 后台。
 
-**日常 OTP 登录邮件**仍由 Supabase Auth 邮件服务发送：若当前默认服务限制收件人，请到 **Project Settings → Authentication / Auth → SMTP Settings** 配置自己的 SMTP Host、Port、Username、Password 和 Sender。可使用 Resend 提供的 SMTP 参数，以服务商控制台当前值为准。学院邀请邮件本身通过 API 发送，不要求额外 SMTP；Auth OTP 与邀请是两条不同发信路径。
+4. 在 **Authentication → Email Templates** 更新两个模板（只粘贴仓库对应HTML，不填写任何密码）：
+   - **Invite user**：复制 `supabase/templates/invite-user.html`，主题可设为「WING SOUND ACADEMY · 学院成员邀请」。
+   - **Magic Link / OTP**：复制 `supabase/templates/magic-link.html`，主题可设为「WING SOUND ACADEMY · 邮箱验证与登录」。
+   - **必须保留 `{{ .ConfirmationURL }}` 完整链接**。Auth 会将本次请求的完整 redirect_to（包括 invitation 与 ticket）写入验证链接，不要改成固定 Site URL，也不要只发送验证码。Magic Link 模板同时保留 `{{ .Token }}` 供日常OTP登录。
+5. 检查 **Authentication → URL Configuration** 中精确 Site URL 和项目路径范围的 Redirect URLs，按上一节配置。保持关闭公众注册、匿名登录，开启 Email 和邮箱确认。**Send Email Auth Hook 如仍连接旧邮件服务，应停用该邮件钩子，使 Auth 使用这里的 SMTP**，其他身份校验不变。
+6. 保存后在网页邀请真实朋友邮箱验证收信与加入；查看 **Authentication → Logs / Auth Logs** 排查 SMTP 错误。Gmail 与 Supabase Auth 都有发信频率限制，可在 **Authentication → Rate Limits** 查看；遇到限流稍后重发，不要密集点击。没有通过真实邮箱收信不视为端到端验证完成。
+
+Edge Function Secrets 仅需按现状保留 `SITE_URL=https://yangzi831.github.io/wing-sound-academy/`（未设置时代码也使用此默认值）。`SUPABASE_URL`、`SUPABASE_ANON_KEY`、`SUPABASE_SERVICE_ROLE_KEY` 继续来自服务端运行环境；不放进 VITE 变量。旧 `RESEND_API_KEY` / `INVITE_FROM` 已不再读取，可在 Secrets 中删除；不要删除 Supabase 自动提供的运行环境配置。
+
+参考：[Supabase 自定义 SMTP](https://supabase.com/docs/guides/auth/auth-smtp)、[Google 应用专用密码](https://support.google.com/accounts/answer/185833)、[Gmail SMTP 端口](https://developers.google.com/workspace/gmail/imap/imap-smtp)。
 
 ### 4. 部署 Edge Function
 
@@ -83,6 +97,8 @@
 npx supabase login
 npx supabase functions deploy academy-invite --project-ref fcesbvigirhkjpfrxqpd
 ```
+
+本次SMTP改动不新增SQL，不改已有数据库、学院邀请票据或RLS。已安装学院 migration 的项目无需再运行SQL；重新部署同名函数即可切换发信方式。函数部署不会自动更新SMTP、Email Templates或Redirect URLs，仍需完成上面的后台设置。前端回调也已同步调整，需发布本次前端版本。
 
 或在 Dashboard 的 Edge Functions 中部署 `supabase/functions/academy-invite/index.ts`。`supabase/config.toml` 关闭网关旧式 JWT 校验以兼容新的签名密钥；**函数自身调用 `auth.getUser()` 验证会话，并使用用户上下文 RPC 验证学院管理员**，不能跳过这些检查。可使用 `deno check supabase/functions/academy-invite/index.ts` 在装有 Deno 的环境检查真实 Deno 类型；本仓库 `npm run check:edge` 使用 TypeScript、真实 SDK 类型和最小 Deno 全局声明检查，不冒充 Edge Runtime 集成测试。
 
@@ -94,11 +110,11 @@ npx supabase functions deploy academy-invite --project-ref fcesbvigirhkjpfrxqpd
 
 ## 日常邀请与权限
 
-管理员打开「成员与邀请」，输入朋友邮箱发送。界面仅在邮件服务接受且数据库状态确认后显示已发送；提供状态、失败原因、重发、撤销与移除成员。邮件投递接受不保证一定到达收件箱，退信需查看 Resend 记录。
+管理员打开「成员与邀请」，输入朋友邮箱发送。界面仅在邮件服务接受且数据库状态确认后显示已发送；提供状态、失败原因、重发、撤销与移除成员。邮件投递接受不保证一定到达收件箱，SMTP问题请查看Supabase Auth Logs及Gmail发信状态。
 
-新账号由服务端 Auth Admin API 的邀请流程建立；已有账号发送 Magic Link。邮件链接同时包含一次性邮箱确认 token 和随机邀请票据。票据在数据库仅存 SHA-256；接受时服务器检查当前账号的真实已验证邮箱、票据、学院、发送状态与7天有效期，再绑定成员身份。不是 Supabase 后台团队成员邀请。
+新账号调用服务端 `inviteUserByEmail(email, { redirectTo })`，由Auth创建待验证身份并通过SMTP发送邀请；已有已确认账号收到重复邮箱错误后，调用 `signInWithOtp({ options: { shouldCreateUser: false, emailRedirectTo } })` 发送登录邮件，不生成第二个账号。两条路径使用同一个带 `invitation` 与 `ticket` 的回调地址，Supabase的 `ConfirmationURL` 负责先验证邮箱再返回网站。原先已发送的 token_hash 邀请邮件仍兼容。票据在数据库仅存 SHA-256；接受时服务器检查当前账号的真实已验证邮箱、票据、学院、发送状态与7天有效期，再绑定成员身份。不是 Supabase 后台团队成员邀请。
 
-重复邀请会撤销旧票据并旋转新票据，发送中防重，成功发送后60秒内限制重发。过期、撤销或发送失败的邀请无法接受。Auth 邮箱确认 token 通常比7天更早过期，以项目 Auth 设置为准：打开链接后可用同一受邀邮箱 OTP 登录，再接受保留在当前标签页的邀请；也可请管理员重发新链接。
+重复邀请会撤销旧票据并旋转新票据，发送中防重，成功发送后60秒内限制重发。过期、撤销或发送失败的邀请无法接受。Auth 邮箱确认 token 通常比7天更早过期，以项目 Auth 设置为准：打开链接后可用同一受邀邮箱 OTP 登录，再接受保留在当前标签页的邀请；后续登录邮件也携带原邀请参数，换标签页打开仍能继续。页面先等SDK消费登录回调，再清理地址栏参数，票据直到服务端确认加入后才删除。也可请管理员重发新链接。
 
 普通成员不能邀请或移除成员。服务器 RLS 和 RPC 同时执行：固定课程不可写、作者不可更换、仅作者能改自己的记录、成员能看学院记录与私有音频。移除成员将其设为 inactive，不删除历史与署名；其已有 JWT 也会失去后续服务器读写和文件权限。已下载到其设备的旧副本无法远程抹除。之后新建的共享课程自动对有效成员开放。
 

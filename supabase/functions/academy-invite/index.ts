@@ -32,13 +32,6 @@ Deno.serve(async (req) => {
   const url = Deno.env.get("SUPABASE_URL")!,
     serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const publicKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-  const emailKey = Deno.env.get("RESEND_API_KEY"),
-    from = Deno.env.get("INVITE_FROM");
-  if (!emailKey || !from)
-    return json(503, {
-      error:
-        "邀请邮件服务尚未配置：需要 RESEND_API_KEY 和已验证域名的 INVITE_FROM",
-    });
   const authorization = req.headers.get("Authorization");
   if (!authorization?.startsWith("Bearer "))
     return json(401, { error: "Sign in required" });
@@ -84,52 +77,54 @@ Deno.serve(async (req) => {
         error: reserveError.message,
       });
     }
-    let link = await admin.auth.admin.generateLink({ type: "invite", email });
-    if (link.error) {
-      // Existing Auth account: email magic link instead of creating a second identity.
-      if (/already|registered|exists/i.test(link.error.message))
-        link = await admin.auth.admin.generateLink({
-          type: "magiclink",
-          email,
-        });
-      else throw new Error("身份邀请生成失败，请检查 Supabase Auth 设置");
-    }
-    if (link.error || !link.data.properties?.hashed_token)
-      throw new Error("登录验证链接生成失败");
     const callback = new URL(site.href);
-    callback.searchParams.set("token_hash", link.data.properties.hashed_token);
-    callback.searchParams.set(
-      "type",
-      link.data.properties.verification_type === "invite"
-        ? "invite"
-        : "magiclink",
-    );
+    callback.hash = "";
     callback.searchParams.set("invitation", invitationId);
     callback.searchParams.set("ticket", ticket);
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${emailKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: [email],
-        subject: "WING SOUND ACADEMY · 学院成员邀请",
-        text: `你收到一份 WING SOUND ACADEMY 学院邀请。\n\n请在7天内打开以下链接验证邮箱并加入学院：\n${callback.href}\n\n学院角色和各门课程的教学角色分别管理。如果你不准备加入，请忽略此邮件。`,
-      }),
-      signal: AbortSignal.timeout(15000),
+    // Auth sends through the project's SMTP. No SMTP password or external mail key
+    // is read by this function, and no user is marked email_confirmed here.
+    let { error: mailError } = await admin.auth.admin.inviteUserByEmail(email, {
+      redirectTo: callback.href,
     });
-    if (!response.ok)
+    const existingAccount =
+      mailError &&
+      (["email_exists", "user_already_exists"].includes(mailError.code || "") ||
+        (!mailError.code &&
+          mailError.status === 422 &&
+          mailError.message ===
+            "A user with this email address has already been registered"));
+    if (existingAccount) {
+      // A separate, sessionless client sends an existing-account login email.
+      // Unlike an admin-generated link, this endpoint actually sends via Auth SMTP.
+      const loginClient = createClient(url, publicKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          flowType: "implicit",
+        },
+      });
+      ({ error: mailError } = await loginClient.auth.signInWithOtp({
+        email,
+        options: { shouldCreateUser: false, emailRedirectTo: callback.href },
+      }));
+    }
+    if (mailError) {
+      const limited =
+        mailError.status === 429 || mailError.code?.startsWith("over_");
       throw new Error(
-        `邮件服务拒绝发送（${response.status}），请管理员检查已验证发信域名、额度及服务日志`,
+        limited
+          ? "Supabase Auth 发信频率受限，请稍后重发，并检查 Authentication → Rate Limits。"
+          : "Supabase Auth 邮件发送失败，请检查后台 SMTP 配置和 Auth Logs；Gmail 需使用应用专用密码。",
       );
+    }
     const { error: deliveryError } = await admin.rpc(
       "academy_invitation_delivery",
       { p_id: invitationId, p_ok: true, p_error: null },
     );
     if (deliveryError)
-      throw new Error("邮件已提交，但邀请状态未能确认，请稍后重新发送新邀请");
+      throw new Error(
+        "Auth 邮件已提交，但邀请状态未能确认，请稍后重新发送新邀请",
+      );
     return json(200, { sent: true, id: invitationId });
   } catch (e) {
     const message = e instanceof Error ? e.message : "邀请失败，请重试";
