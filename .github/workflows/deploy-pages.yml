@@ -29,6 +29,8 @@ jobs:
         run: npm ci
       - name: Test
         run: npm test
+      - name: Check invitation function types
+        run: npm run check:edge
       - name: Build
         run: npm run build
         env:

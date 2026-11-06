@@ -10,3 +10,4 @@ test-results/
 .playwright-cli/
 output/playwright/*-backup.json
 output/playwright/cloud-*.png
+output/playwright/academy-*.png

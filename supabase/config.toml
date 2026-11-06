@@ -1,0 +1,6 @@
+project_id = "wing-sound-academy"
+
+[functions.academy-invite]
+verify_jwt = false
+# The function verifies the user JWT through auth.getUser(), then the user-context
+# admin RPC. Gateway verification is disabled for current asymmetric signing keys.

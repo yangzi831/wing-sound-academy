@@ -35,7 +35,7 @@ export function downloadJSON(value: unknown, name: string) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-function Login() {
+export function Login({ academy = false }: { academy?: boolean }) {
   const [email, setEmail] = useState(""),
     [token, setToken] = useState(""),
     [sent, setSent] = useState(false);
@@ -44,10 +44,16 @@ function Login() {
   return (
     <section className="cloud-login" id="studio-login">
       <div>
-        <span className="eyebrow">PERSONAL STUDIO / PRIVATE ACCESS</span>
-        <h2>进入个人工作室</h2>
+        <span className="eyebrow">
+          {academy
+            ? "ACADEMY / MEMBERS ONLY"
+            : "PERSONAL STUDIO / PRIVATE ACCESS"}
+        </span>
+        <h2>{academy ? "进入学院" : "进入个人工作室"}</h2>
         <p>
-          首次在此设备验证邮箱。登录会话将保留，课程记录和试听文件仅向本人开放。
+          {academy
+            ? "使用受邀邮箱验证身份，登录会话将保留。学习记录和试听作品仅向学院成员开放，各自编辑本人的记录。"
+            : "首次在此设备验证邮箱。登录会话将保留，课程记录和试听文件仅向本人开放。"}
         </p>
       </div>
       {cloudConfigured ? (

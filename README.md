@@ -1,139 +1,139 @@
 # WING SOUND ACADEMY
 
-个人电子音乐学院教务与创作平台，React + TypeScript + Vite，GitHub Pages + Supabase Auth / Postgres / 私有 Storage。
+学院课程与创作平台。React + TypeScript + Vite；GitHub Pages + 现有 Supabase Auth / Postgres / 私有 Storage。
 
-站点：https://yangzi831.github.io/wing-sound-academy/
+网站：[https://yangzi831.github.io/wing-sound-academy/](https://yangzi831.github.io/wing-sound-academy/)
 
-## 本地启动
+## 本地开发与检查
 
-推荐 Node.js 22.10+。
+推荐 Node.js 22。执行 `npm ci`、`npm run dev`；校验使用 `npm test`、`npm run check:edge`、`npm run build`。
+将 `.env.example` 复制为被 Git 忽略的 `.env.local`，仅填写真实项目 URL 和 Publishable Key。
+开发地址 `http://127.0.0.1:5173/`；无云配置或未登录时仅展示公开电子音乐大纲。
+
+## 架构与本次调整
+
+原 `AcademyData` 把单套16周课程和个人数据组合在一起。原 hash 路由、`types.ts`、`data.ts`、`storage.ts` 和电子音乐页面保留，通过 `ElectronicAdapter` 投影为当前作者的数据；组合后的对象不再整体上传。
+
+组织方式是「学院 → 课程 → 课次或项目 → 作者的学习记录」。学院首页是课程入口，课程选择使用 `?course=课程ID`；电子音乐内部继续使用原 `#overview`、`#schedule`、`#week/W01`、`#projects`、`#project/P04`、`#critique`、`#archive`、`#syllabus`。旧深链接仍进入电子音乐课程。
+
+| 层         | 数据与实现                                                                                            |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| 学院与成员 | `academies`、`academy_members`；学院权限仅管理员 / 成员                                               |
+| 共同课程   | `academy_documents` 中无个人作者的 `course / lesson / project`；每条独立版本                          |
+| 个人记录   | 同表中有 `author_id + course_id` 的 `week / process / note / artifact / critique`；可选课次、项目关联 |
+| 反馈       | `feedback` 有自己的作者和目标记录，不能代改对方作品                                                   |
+| 冲突与历史 | `academy_history` + 每条记录 CAS revision；本机保存冲突双方                                           |
+| 文件       | `academy_files` 登记课程 / 学院 / 作者，`studio-audio` 继续私有                                       |
+| 邀请       | `academy_invitations`；`academy-invite` Edge Function 负责 Auth 管理与真实邮件发送                    |
+
+新增代码分别位于 `academy-model.ts`、`academy-engine.ts`、`academy-api.ts`、`academy-ui.tsx`，旧云同步模块作为迁移前兼容界面保留。服务器尚无 `academy_index` 时，新前端继续运行旧个人工作室；增量迁移成功并刷新后才启用学院界面。
+
+首批课程：
+
+- **电子音乐制作**：原16周、P00–P04、2026-10-25开始且每周日。课程大纲、教学目标、课次任务与项目任务书在前端及服务端固定；个人进度、笔记、五阶段、过程、作品、总结和讲评继续编辑。
+- **键盘**：仅空课程框架。原管理员默认老师，后加入成员默认学生。
+- **小提琴**：仅空课程框架。原管理员默认学生，后加入成员默认老师。
+
+管理员可在网页新增、排序、归档、恢复自定义课程，并设置每个人的课程角色。成员共同编辑简介、目标、课次主题、内容、练习、参考资料和可选日期；不强制16周或5项目。课程角色不授予学院管理权。学习进度按作者与课次去重；老师显示备课和反馈任务，不计算学生作业完成率。
+
+## 现有 Supabase 项目升级：只做一次
+
+当前沿用项目 `fcesbvigirhkjpfrxqpd`。前端发布不等于数据库或 Edge Function 已发布。完整 SQL 与函数代码已提供；需要项目所有者在自己的后台或已登录 CLI 执行以下步骤。**不要把管理密钥发到聊天或填进 VITE 变量。**
+
+### 1. 保留备份，执行增量 migration
+
+1. 在原网站登录，确认尽量同步完成，导出带音频的完整 JSON；保留旧设备的浏览器缓存。条件允许时另做 Supabase 数据库备份。
+2. 打开 **Supabase Dashboard → 现有项目 → SQL Editor → New query**，执行 **`supabase/migrations/202611060001_academy.sql` 全文**。原 `202610210001_studio_sync.sql` 已执行过时不要重跑。
+3. 脚本在一个事务中创建新表、权限和函数，给原 `studio_owners` 中的每位所有者建立确定ID的学院及管理员身份，并将旧云数据按原作者拆分。不会删除或清空旧表；会保存 `academy_legacy_snapshot`，迁移每个历史版本并登记旧音频路径。共同课程只建立一份。
+4. 失败时事务回滚，修正原因后重跑全文；已成功时无需再次执行，重复运行会在建表阶段停止，不能重复生成课程。通过 Supabase CLI 管理数据库的项目应使用已登记迁移历史的 `supabase db push`，不要与未登记的 SQL Editor 执行方式混用。
+5. 刷新网站。原管理员自动看到3门课程。浏览器中尚未上传的旧记录，在「同步与备份 → 检测到旧版本机数据」中明确比较导入；不会自动把本机默认空内容上传到学院。朋友不导入你的旧缓存，从空白个人记录开始。
+
+新安装才需要先执行旧 migration、通过 Auth 建立并验证第一位管理员、一次性将该账号加入 `studio_owners`，然后执行学院 migration。现有项目无需重新建立管理员；日后邀请朋友均在网页完成，不需要 UID 或 SQL。
+
+### 2. Auth 设置
+
+**Authentication → URL Configuration**：
+
+- Site URL：`https://yangzi831.github.io/wing-sound-academy/`
+- Redirect URLs：精确加入同一地址；开发需要时加入 `http://127.0.0.1:5173/` 和 `http://127.0.0.1:4173/`。
+- **Sign In / Providers**：启用 Email；保持关闭公众注册和匿名登录。普通登录发送 OTP 时 `shouldCreateUser: false`。
+- Magic Link 邮件模板保留 `{{ .Token }}`，使已受邀账号能在页面输入验证码登录。会话持久化、自动刷新，不要求每次打开重新登录。
+
+### 3. 一次性配置邀请邮件
+
+邀请使用 **Edge Function → Resend API**，不依赖浏览器发信或人工复制 Supabase 团队邀请。需准备 Resend 账号、验证自己的发信域名并设置域名 DNS，再创建仅发信所需的 API Key。
+
+在 **Supabase Dashboard → Edge Functions → Secrets** 添加：
+
+| Secret           | 内容                                                                         |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `RESEND_API_KEY` | Resend 服务端发信 API Key                                                    |
+| `INVITE_FROM`    | 已验证域名发件地址，如 `WING SOUND ACADEMY <academy@你的域名>`，请填真实地址 |
+| `SITE_URL`       | `https://yangzi831.github.io/wing-sound-academy/`                            |
+
+`SUPABASE_URL`、`SUPABASE_ANON_KEY`、`SUPABASE_SERVICE_ROLE_KEY` 使用 Edge Runtime 的服务端环境，不写进仓库、Pages 或任何 `VITE_*` 变量。Resend 的测试发件域可能只能发往账号本人，邀请朋友前应验证自己的域名。
+
+**日常 OTP 登录邮件**仍由 Supabase Auth 邮件服务发送：若当前默认服务限制收件人，请到 **Project Settings → Authentication / Auth → SMTP Settings** 配置自己的 SMTP Host、Port、Username、Password 和 Sender。可使用 Resend 提供的 SMTP 参数，以服务商控制台当前值为准。学院邀请邮件本身通过 API 发送，不要求额外 SMTP；Auth OTP 与邀请是两条不同发信路径。
+
+### 4. 部署 Edge Function
+
+在仓库根目录使用已授权的 Supabase CLI：
 
 ```bash
-npm ci
-# 复制 .env.example 为 .env.local，填写真实项目 URL 与 Publishable Key
-npm run dev
-npm test
-npm run build
-npm run preview
+npx supabase login
+npx supabase functions deploy academy-invite --project-ref fcesbvigirhkjpfrxqpd
 ```
 
-开发地址固定为 http://127.0.0.1:5173/ ，预览地址为 http://127.0.0.1:4173/ 。两者及正式域名的本机缓存相互独立。无云配置时只显示公开课程大纲；旧个人数据保留，不会被默认课程覆盖。
+或在 Dashboard 的 Edge Functions 中部署 `supabase/functions/academy-invite/index.ts`。`supabase/config.toml` 关闭网关旧式 JWT 校验以兼容新的签名密钥；**函数自身调用 `auth.getUser()` 验证会话，并使用用户上下文 RPC 验证学院管理员**，不能跳过这些检查。可使用 `deno check supabase/functions/academy-invite/index.ts` 在装有 Deno 的环境检查真实 Deno 类型；本仓库 `npm run check:edge` 使用 TypeScript、真实 SDK 类型和最小 Deno 全局声明检查，不冒充 Edge Runtime 集成测试。
 
-## Supabase 配置（站点所有者执行一次）
+### 5. 前端与 GitHub Pages
 
-代码不会自动创建项目或生成密钥，也没有服务端私钥。按以下顺序配置：
+保留现有仓库 **Settings → Secrets and variables → Actions → Variables** 两项：`VITE_SUPABASE_URL`、`VITE_SUPABASE_PUBLISHABLE_KEY`。仅允许 `sb_publishable_` 前缀，构建拒绝服务端密钥。现有项目配置不需要更换。
 
-1. 登录 https://supabase.com/dashboard → **New project**，创建自己的项目。数据库密码只保存在你的密码管理工具中，不填写到网站或 GitHub 前端环境变量。
-2. 打开项目 **SQL Editor → New query**，粘贴并运行 `supabase/migrations/202610210001_studio_sync.sql` 全文，运行一次即可。脚本会创建独立记录、历史表、版本检查函数、RLS，以及 `studio-audio` 私有 Bucket。执行失败时事务会回滚，不要只执行其中几行。
-3. **Authentication → URL Configuration**：Site URL 填 `https://yangzi831.github.io/wing-sound-academy/`。Redirect URLs 精确加入同一地址；开发时另加入 `http://127.0.0.1:5173/`，需要预览登录时加入 `http://127.0.0.1:4173/`。不添加通配域名、不附带 `#overview` 等路由。
-4. **Authentication → Sign In / Providers**：启用 Email；关闭 **Allow new users to sign up** 和匿名登录。应用发送验证码时也设置 `shouldCreateUser: false`，没有自助注册入口。
-5. **Authentication → Users → Add user → Invite a user**，仅邀请你的邮箱。使用邀请邮件确认身份。复制这个用户的 **User UID**。如 UI 菜单名称随 Supabase 版本调整，可在 Authentication 的 Users 页查找邀请入口。
-6. 回到 **SQL Editor**，将下面占位内容换成真实 User UID 后执行：
+`main` 推送后 GitHub Actions 执行 `npm ci → npm test → npm run check:edge → npm run build → Pages`。前端不需要因新增课程重新部署。部署环境变量修改则需要重新构建。无数据库管理凭据时不能靠 Publishable Key 执行 SQL 或部署服务端函数。
 
-   ```sql
-   insert into public.studio_owners(user_id)
-   values ('把这里替换为你在 Authentication Users 中复制的真实 UUID')
-   on conflict do nothing;
-   ```
+## 日常邀请与权限
 
-   `studio_owners` 没有任何前端写入权限。即使其他账号意外注册成功，也不能读取或写入个人记录或音频。只加入你本人的 UID。
-7. **Authentication → Email Templates → Magic Link**：让邮件包含一次性验证码 `{{ .Token }}`。例如邮件正文可为 `<h2>WING SOUND ACADEMY</h2><p>登录验证码：{{ .Token }}</p>`。网站直接输入邮件验证码登录；如果保留 Magic Link，SDK 也会在挂载私人页面前处理登录回调。若邮件未到达，检查 Auth 日志、垃圾邮件和 Supabase 默认邮件服务的收件限制；按需配置自有 SMTP，SMTP 密钥只留在 Supabase。
-8. **Project Settings → Data API** 复制 **Project URL**（末尾不加斜杠）；**Settings → API Keys** 复制以 `sb_publishable_` 开头的 **Publishable Key**。这是公开浏览器配置，权限依赖 RLS 和已验证身份。**不使用 `service_role`、`sb_secret_`、数据库密码或旧式私钥。**
-9. GitHub 仓库 **Settings → Secrets and variables → Actions → Variables → New repository variable**，设置：
+管理员打开「成员与邀请」，输入朋友邮箱发送。界面仅在邮件服务接受且数据库状态确认后显示已发送；提供状态、失败原因、重发、撤销与移除成员。邮件投递接受不保证一定到达收件箱，退信需查看 Resend 记录。
 
-   | 名称 | 值 |
-   | --- | --- |
-   | `VITE_SUPABASE_URL` | 真实 Project URL |
-   | `VITE_SUPABASE_PUBLISHABLE_KEY` | 真实 Publishable Key |
+新账号由服务端 Auth Admin API 的邀请流程建立；已有账号发送 Magic Link。邮件链接同时包含一次性邮箱确认 token 和随机邀请票据。票据在数据库仅存 SHA-256；接受时服务器检查当前账号的真实已验证邮箱、票据、学院、发送状态与7天有效期，再绑定成员身份。不是 Supabase 后台团队成员邀请。
 
-10. 仓库 **Actions → Deploy GitHub Pages → Run workflow → main**，等待构建与部署完成。本地开发将相同两项放进被 Git 忽略的 `.env.local`，然后重启开发服务。
+重复邀请会撤销旧票据并旋转新票据，发送中防重，成功发送后60秒内限制重发。过期、撤销或发送失败的邀请无法接受。Auth 邮箱确认 token 通常比7天更早过期，以项目 Auth 设置为准：打开链接后可用同一受邀邮箱 OTP 登录，再接受保留在当前标签页的邀请；也可请管理员重发新链接。
 
-Vite 在构建时校验配置。缺少两项配置时会发布公开大纲与配置提示；只填一项、URL 格式错误或使用非 Publishable Key 时，构建会停止，错误信息不打印密钥。前端环境变量在构建时进入浏览器包；后续修改 GitHub Variables 必须重新运行部署。
+普通成员不能邀请或移除成员。服务器 RLS 和 RPC 同时执行：固定课程不可写、作者不可更换、仅作者能改自己的记录、成员能看学院记录与私有音频。移除成员将其设为 inactive，不删除历史与署名；其已有 JWT 也会失去后续服务器读写和文件权限。已下载到其设备的旧副本无法远程抹除。之后新建的共享课程自动对有效成员开放。
 
-Supabase 默认会话持久化并自动刷新。新设备第一次验证邮箱即可；会话过期、手动退出、浏览器清理或服务端撤销可能要求再次验证。使用新版 Chrome、Edge 或 Safari；同一浏览器仅允许一个标签页持有编辑锁，其他标签页会提示关闭重复页面。
+## 云同步、缓存、音频与备份
 
-## 第一次迁移与换设备
+| 保存位置                                      | 作用                                                                   |
+| --------------------------------------------- | ---------------------------------------------------------------------- |
+| Supabase 数据库                               | 学院成员、共享课程、独立作者记录、历史版本和文件登记；服务器为权限依据 |
+| `wing-academy:v2:学院ID:用户UID` localStorage | 当前文档、已知云版本、待同步差异和冲突；旧缓存原样保留                 |
+| 原 `wing-sound-audio/files` IndexedDB         | 音频字节和下载缓存，继续兼容原文件ID                                   |
+| `wing-academy-recovery/snapshots` IndexedDB   | 首次升级及导入、冲突处理前的可恢复快照，页面提供原文和完整备份导出     |
+| Supabase `studio-audio` 私有 Bucket           | 新路径 `学院ID/作者UID/文件ID`，旧路径继续登记授权；不是公共下载URL    |
+| 学院完整 JSON version2                        | 双方可见记录、共享框架、完整音频字节；独立灾难恢复                     |
+| 原电子音乐完整 JSON version1                  | 当前作者的电子音乐记录与音频；旧备份继续可导入导出                     |
 
-登录前只显示内置公开课程大纲，不读取个人缓存到页面，也不开放修改。登录后服务器验证邮箱已确认且 UID 位于允许名单。
+修改即时写本机，停止输入约0.9秒后同步；每15秒、恢复网络和页面重新可见时检查。每条课次、每人的记录独立CAS更新，失败保留原数据。两设备同时编辑同一课次会保留冲突双方，允许下载、选择和手动合并，处理前先写恢复快照。关闭页面不会后台上传，重开继续；没有 Service Worker，完全断网首次开站仍需要浏览器已缓存网页资源。
 
-第一次在一个设备启用同步时，先读取原 `wing-sound-academy:v1` 和云端快照，显示记录数量与差异摘要，不自动上传或覆盖：
+完整备份导出会授权下载缺少的音频，下载失败时整体报错，不导出虚假的完整备份。导入先保留快照、校验再应用：只恢复当前作者，差异进入比较，不删除备份未列出的记录；不把对方作品改成自己的。管理员可显式勾选恢复自定义共同课程框架，固定电子音乐内容不导入覆盖。不同学院备份不能混合身份。备份仍包含对方记录用于保存，但不能冒充对方恢复；恢复对方记录需其本人登录。原版16周校验仅用于旧备份与电子音乐投影，不限制新增自定义课程。
 
-- 云端为空：点击「确认将本机记录及音频迁移到云端」。已有16周与P00–P04沿用原 ID，只建立一次，不追加第二套课程。
-- 两边都有数据：选择「比较并合并两边记录」，不同记录逐条选择或手动合并；也可明确选择使用云端，或确认以本机替换云端。替换产生的旧云版本留在历史表中。
-- 新手机没有旧资料时，直接选择「使用云端」；旧数据设备先完成迁移并显示「已同步」，再在新设备登录，流程最简单。
+音频 ≤45 MiB，优先 MP3/M4A；支持格式及浏览器解码限制沿用原实现。文件先存本机，再上传、回读验证大小与SHA-256，再发布元数据。失败保留文件，可同步重试、移除关联或替换；不上传DAW工程。成员用授权SDK下载私有音频为Blob播放，不保存公共/签名URL。更换音频使用新ID；原音频保留支持冲突与历史恢复，「我的私有音频文件」可下载并明确确认永久删除未引用文件。只能删除本人文件，服务器拒绝删除仍被记录引用的文件；永久删除会影响历史试听。
 
-每次选择迁移、导入或处理冲突前，都必须成功写入 IndexedDB 恢复快照。快照写入失败会停止操作。原版 localStorage 和音频不会自动删除；完成云端回读与音频字节校验后才显示「已同步」。中途关页、上传失败或断网时，保留缓存与待同步差异，可重试。
+云同步不是备份。清理浏览器会丢失尚未同步的记录、本机音频和恢复快照；请定期另存完整JSON。退出后页面不显示私人内容，本机缓存不加密，应保护设备账户。
 
-大于45 MB或不支持格式的旧音频会提示重新添加较小的试听文件；独立的文字记录仍可同步。原文件继续保留在旧 IndexedDB 和完整备份中。音频上传尚未完成时，与之关联的讲评会等待，避免其他设备收到不可用的关联。
+## 验证与上线验收
 
-## 云同步、本机缓存、文件存储与备份的区别
+最新结果见 [QA.md](QA.md)。本地测试包含实际 PostgreSQL/PGlite 执行两份 migration、RLS/RPC/Storage策略、迁移历史与原音频路径、两作者同步、第四门课程、离线重载、并发冲突、备份与模拟邮件边界。模拟客户端和邮件服务测试不是两台真实设备或真实邮箱测试。
 
-| 层 | 保存内容 | 用途 |
-| --- | --- | --- |
-| Supabase Postgres | 学期设置、周次内容/进度/笔记、项目/五阶段/总结、讲评及版本关联、档案元数据 | 授权设备共同使用的记录 |
-| 本机 localStorage | 按用户 UID 隔离的当前数据、已知服务器版本、未同步差异与冲突 | 即时保存、离线编辑、刷新后续传 |
-| IndexedDB | 音频原始字节、云音频本机缓存、迁移及恢复快照 | 离线试听、上传重试、恢复迁移前内容 |
-| Supabase 私有 Storage | 每个文件 ID 对应的不可变试听文件 | 登录授权后跨设备下载和播放 |
-| 手动完整 JSON 备份 | 课程与个人数据、音频 Base64 字节 | 独立灾难恢复、离开此平台仍能保存文件 |
+完成上述一次性后台部署后，需要用两个真实邮箱 / 浏览器验收：
 
-云同步会传播修改与删除，不能替代独立备份。浏览器清理可能删除离线未同步记录、恢复快照和本机文件。退出登录不清除缓存，但页面不再显示私人内容；本机缓存不加密，请保护设备的系统账户。没有网络且从未缓存过的文件不能试听。静态网站没有 Service Worker：已加载页面断网后能继续编辑，完全断网时首次打开网页仍需浏览器已有资源缓存。
+1. 原管理员检查原笔记、P04五阶段、版本讲评关联、音频试听，并导出新备份。
+2. 网页邀请朋友，实际收信并确认，自动加入同一学院；朋友个人进度为空，可查看原管理员记录。
+3. 新增第四门课程，另一账号 / 设备可见；双方编辑自定义课次，固定课程直接RPC改写仍被拒绝。
+4. 分别写笔记、提交试听文件、互留反馈，筛选作者并在另一设备播放；老师不显示学生作业完成要求。
+5. 断网编辑后恢复网络，同步成功；并发改同一课次产生可恢复冲突，旧内容不静默丢失。
+6. 撤销 / 过期邀请不能加入；普通成员和外部账号不能管理成员。移除已登录成员后，其数据及音频请求被拒绝。
+7. 导入旧完整JSON，比较差异、试听音频并确认恢复快照。迁移前后不手动清除旧数据。
 
-### 自动保存与冲突
-
-每周、每个项目、每条讲评、每份档案、课程设置各为一个数据库实体。修改只写入变化的实体，服务器以 `expected revision` 做原子比较并增加版本号；不会每输入一个字符就覆盖整份学期。P04五阶段、创作总结及音频时间位置反馈沿用原字段。
-
-文字立即保存至本机，停止输入约0.9秒后同步；每15秒、恢复网络、页面重新可见时检查云端。显示「已同步 / 同步中 / 未同步 / 离线 / 同步失败 / 存在冲突」。页面关闭后不会在后台上传，重新打开会继续处理持久化差异。数据请求15秒超时，音频传输允许180秒。
-
-如果同一实体在两个设备都有修改，会保留双方完整对象并暂停该实体的自动覆盖。点击顶部同步状态查看字段差异，选择本机、云端或手动合并，亦可先下载两个版本。即使选择后云端又被修改，下一次版本检查仍会再次产生冲突。不同实体的编辑可独立同步。
-
-删除使用墓碑记录，避免旧设备复活已删除档案。删除或改分类的音频档案会在同一数据库事务中清除讲评关联，保留讲评文字和历史；与本机未同步讲评相交时保留关联档案并提示冲突，先处理讲评关联再选择删除档案。同步管理可查看最近100个云端历史版本、下载或恢复；更多历史可在 Supabase 表中按 UID/记录 ID 查询。
-
-### 音频
-
-只接受试听音频，不同步DAW工程。支持 MP3、M4A、AAC、WAV、OGG、FLAC、AIFF 和 WebM 文件扩展名；能否解码取决于浏览器，跨手机优先 MP3 / M4A。前端与 Bucket 都限制单文件45 MiB，低于免费方案常见单文件上限；总容量、流量和项目暂停规则请以自己 Supabase Dashboard 的当前配额为准。
-
-先写入本机 IndexedDB，再上传 `用户UID/文件UUID`，不覆盖同路径。上传后回读校验大小和 SHA-256，通过后才发布元数据给其他设备。失败显示原因并保留文件，可在档案卡片重试或更换文件。下载通过已登录 SDK 调用私有 Storage，保存为本机 Blob 播放；不生成公共URL或将签名URL存进备份。首次跨设备试听需要完整下载该试听文件。
-
-更换文件使用新文件 ID。移除档案或更换音频时旧文件保留以支持冲突/历史恢复。同步管理里的「私有音频管理」可列出当前档案未引用的文件、下载原文件并明确确认永久删除。永久删除前请确认其他设备已同步且保有备份；历史音频引用可能依赖旧文件。清理最多列出1000个文件，不会自动批量删除。本机原文件不自动清理。
-
-### 完整 JSON 与恢复
-
-右上「数据管理」保留导入、导出功能。完整导出会为本机缺少的云音频进行授权下载，再打包原始字节；失败明确报错，不导出声称完整但缺少音频的备份。外部作品链接仅备份地址，无法复制远端平台的文件。
-
-完整备份仍为 `wing-sound-backup` version1。旧版备份可导入，先验证16周、5项目、日期、类型、作品关联和全部文件，再给音频分配新 ID；旧云文件路径会移除，随后作为新的本机文件安全上传。导入不直接写云端，也不改写旧 `wing-sound-academy:v1`，先快照当前状态再经同步版本检查。无效备份不会覆盖现有文字或音频。
-
-同步状态 JSON、冲突 JSON 和恢复快照原文仅用于诊断/人工恢复，可能包含两边版本文字，**不是带音频的完整备份**，请妥善保管。恢复快照区可直接导出符合完整导入格式的 JSON。
-
-## 数据模型与最小迁移范围
-
-- 保留 schemaVersion1、W01–W16、P00–P04、2026-10-25至2027-02-07每周日、所有原字段和内部旧枚举。展示继续使用音乐专业术语映射。
-- `Artifact` 仅新增可选 `remotePath / fileSize / fileHash`，原 `fileId` 和 IndexedDB 数据库不变。
-- `studio_records` 用 `(user_id, kind, id)` 标识独立实体，种类为 semester/session/project/critique/artifact；JSONB保存原字段而不拆散创作记录。`studio_history` 保留每次成功提交。数据库不放默认课程种子，不会在每次登录重复创建项目。
-- 新缓存键：`wing-sound-sync:v1:用户UID`；原 `wing-sound-academy:v1`只读迁移来源。恢复快照库：`wing-sound-sync-recovery`。
-- 所有个人表启用RLS，普通用户仅可读自己的记录/历史；修改必须走验证身份及允许名单的CAS函数。直接 REST 写表被拒绝。Storage策略同时检查允许名单、已验证用户和路径UID。
-- 公开GitHub仓库只包含代码、SQL和公开配置示例；没有密钥文件。`.env.local`被忽略，构建拒绝非Publishable Key。
-
-## 保留的课程与视觉功能
-
-总览、16周课表与编辑、P00–P04任务书与状态、P04五阶段、创作过程与总结、讲评记录/音频版本/时间位置反馈、作品档案、原生音频播放、课程设置和完整备份均保留。日期只定位课程，不会自动完成任务。
-
-保持黑白灰、电蓝、细线网格和正文16px。项目艺术封面为本项目原创生成式SVG（`src/assets/artwork`），不冒充真实音频分析；`node scripts/generate-artwork.mjs`可重新生成。
-
-## 部署
-
-`.github/workflows/deploy-pages.yml`：push main → npm ci → npm test → npm run build → GitHub Pages。使用仓库 Variables 注入两项Vite配置。`base: './'`与hash路由不变；回调回到项目根目录，SDK处理身份信息后再挂载App，避免hash路由误吞登录信息。
-
-## 验证范围与实际启用检查
-
-`npm test`包含旧备份兼容、日期与关联校验，以及两个模拟客户端的独立实体同步、离线重载、并发CAS、冲突保留/合并/快照、墓碑、上传失败重试和私有下载字节验证。PGlite运行实际PostgreSQL迁移脚本，验证RLS、未授权/未验证/匿名拒绝、禁止直接写表、历史不可改、私有Storage行策略和关联删除事务。
-
-这些本地测试不替代你的真实项目验证。配置项目并部署后，在两个不同浏览器/设备完成：
-
-1. 公司电脑邮箱登录，确认迁移；写一条W01笔记，等待「已同步」。家里电脑/手机登录后选择云端，确认文字与课程完成状态一致。
-2. 上传小型MP3 / M4A Demo，等待校验完成，另一设备在相同档案试听。
-3. 保持页面打开，断网写笔记；恢复网络后刷新并检查本机队列仍在，点击同步，另一设备读取。
-4. 两设备断网修改同一条笔记，再依次联网。确认出现冲突、双方内容均可下载，手动合并后两边一致。
-5. 导入一份旧版完整JSON，检查音频字节、讲评版本关联、五阶段与总结；同时检查导入前恢复快照。
-6. 退出登录只能查看公开大纲；未授权账号和未登录请求均不能读私人表或Bucket。
-
-当前是否已配置真实后端以及线上验证结果见 `QA.md` 的最新记录。
+保留黑白灰、电蓝、原创SVG项目封面、16px正文与原电子音乐工作台；新增学院层与简单表单，不引入后台管理系统。

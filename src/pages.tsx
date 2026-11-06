@@ -174,12 +174,14 @@ export function WeekDetail({
   update,
   openCrit,
   notify,
+  fixed = false,
 }: {
   session: Session;
   data: AcademyData;
   update: (p: Partial<Session>) => void;
   openCrit: () => void;
   notify: (s: string) => void;
+  fixed?: boolean;
 }) {
   const [edit, setEdit] = useState(false);
   const p = data.projects.find((p) => p.id === s.projectId)!;
@@ -225,10 +227,12 @@ export function WeekDetail({
         <button className="text-btn" onClick={() => go("project", p.id)}>
           {p.id} / {p.name} <ArrowUpRight size={14} />
         </button>
-        <button className="text-btn" onClick={() => setEdit(true)}>
-          <Pencil size={13} />
-          编辑课程配置
-        </button>
+        {!fixed && (
+          <button className="text-btn" onClick={() => setEdit(true)}>
+            <Pencil size={13} />
+            编辑课程配置
+          </button>
+        )}
       </div>
       <div className="detail-columns">
         <div>
@@ -300,6 +304,7 @@ export function ProjectDetail({
   openArtifact,
   crits,
   artifacts,
+  fixed = false,
 }: {
   project: Project;
   data: AcademyData;
@@ -309,6 +314,7 @@ export function ProjectDetail({
   openArtifact: () => void;
   crits: ReactNode;
   artifacts: ReactNode;
+  fixed?: boolean;
 }) {
   const [tab, setTab] = useState("brief");
   const [editing, setEditing] = useState(false);
@@ -419,13 +425,15 @@ export function ProjectDetail({
               code="01"
               title="项目 Brief"
               action={
-                <button
-                  className="text-btn"
-                  onClick={() => setEditing(!editing)}
-                >
-                  <Pencil size={13} />
-                  {editing ? "完成编辑" : "编辑创作任务"}
-                </button>
+                !fixed && (
+                  <button
+                    className="text-btn"
+                    onClick={() => setEditing(!editing)}
+                  >
+                    <Pencil size={13} />
+                    {editing ? "完成编辑" : "编辑创作任务"}
+                  </button>
+                )
               }
             />
             {editing ? (
@@ -576,10 +584,12 @@ export function Syllabus({
   data,
   edit,
   publicView = false,
+  fixed = false,
 }: {
   data: AcademyData;
   edit: () => void;
   publicView?: boolean;
+  fixed?: boolean;
 }) {
   return (
     <>
@@ -588,10 +598,12 @@ export function Syllabus({
         title="Course syllabus"
         cn="课程大纲 / 电子音乐创作实验室"
       >
-        <button className="secondary-btn" onClick={edit}>
-          <Pencil size={15} />
-          {publicView ? "登录个人工作室" : "编辑课程信息"}
-        </button>
+        {!fixed && (
+          <button className="secondary-btn" onClick={edit}>
+            <Pencil size={15} />
+            {publicView ? "登录个人工作室" : "编辑课程信息"}
+          </button>
+        )}
       </PageTitle>
       <div className="syllabus-layout">
         <aside className="syllabus-index">

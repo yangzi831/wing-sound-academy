@@ -64,9 +64,11 @@ const routeFromHash = (): Route => {
 export default function App({
   engine,
   syncTools,
+  fixed = false,
 }: {
   engine: SyncEngine;
   syncTools: ReactNode;
+  fixed?: boolean;
 }) {
   const [loadError, setLoadError] = useState("");
   const data = engine.state.data;
@@ -742,6 +744,7 @@ export default function App({
                 update={(patch) => sessionUpdate(s.id, patch)}
                 openCrit={() => openCrit(s.projectId)}
                 notify={setToast}
+                fixed={fixed}
               />
             ) : (
               <Empty
@@ -834,6 +837,7 @@ export default function App({
                   data.artifacts.filter((a) => a.projectId === p.id),
                   p.id,
                 )}
+                fixed={fixed}
               />
             ) : (
               <Empty
@@ -932,7 +936,14 @@ export default function App({
           </>
         )}
         {route.page === "syllabus" && (
-          <Syllabus data={data} edit={() => setModal("course")} />
+          <Syllabus
+            data={data}
+            edit={() => {
+              if (!fixed) setModal("course");
+            }}
+            publicView={false}
+            fixed={fixed}
+          />
         )}
       </main>
       <footer>

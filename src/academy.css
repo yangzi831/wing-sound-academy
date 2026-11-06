@@ -1,0 +1,352 @@
+.academy-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 12px 3%;
+  border-bottom: 1px solid #b8bebf;
+  background: #f4f4ef;
+  position: relative;
+  z-index: 5;
+  font-size: 14px;
+}
+.academy-upgrade-notice {
+  padding: 14px 4%;
+  font-size: 14px;
+  line-height: 1.7;
+  background: #e9edec;
+  color: #273d40;
+  border-bottom: 1px solid #acb7b8;
+}
+.academy-toolbar select {
+  max-width: 260px;
+  min-height: 44px;
+  background: transparent;
+  border: 1px solid #a8afb3;
+  font-size: 16px;
+  padding: 6px 10px;
+}
+.academy-status {
+  margin-left: auto;
+  color: #0343d9;
+}
+.academy-courses {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 32px 0 56px;
+}
+.academy-courses article {
+  border: 1px solid #b9bec0;
+  min-width: 0;
+}
+.academy-courses article > .project-artwork,
+.custom-course-mark {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+.academy-courses article > .project-artwork img {
+  height: 100%;
+  object-fit: cover;
+}
+.academy-courses + .academy-home-lower {
+  margin-top: 20px;
+}
+.academy-event span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.custom-course-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 28px;
+  background: #e3e9e3;
+}
+.custom-course-mark > span {
+  font-size: 90px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: #183b37;
+}
+.custom-course-mark small {
+  font: 12px monospace;
+  color: #374d4b;
+}
+.academy-courses article:nth-child(3n) .custom-course-mark {
+  background: #eee5d7;
+}
+.academy-courses h2 {
+  font-size: 26px;
+  margin: 14px 0;
+}
+.academy-courses h2 button {
+  text-align: left;
+}
+.course-card-content {
+  padding: 24px;
+}
+.course-card-content p {
+  font-size: 16px;
+  line-height: 1.7;
+}
+.academy-home-lower {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+.academy-home-lower h2,
+.course-goals h2 {
+  font-size: 26px;
+  margin: 16px 0;
+}
+.academy-event {
+  display: flex;
+  width: 100%;
+  text-align: left;
+  padding: 20px 0;
+  border-bottom: 1px solid #bec4c4;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 16px;
+}
+.academy-event small {
+  color: #454e52;
+  font-size: 14px;
+}
+.course-goals {
+  border-top: 1px solid #aab1b3;
+  padding: 24px 0;
+}
+.academy-lessons article {
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  gap: 24px;
+  padding: 32px 0;
+  border-bottom: 1px solid #b5bdc0;
+  align-items: start;
+}
+.lesson-index {
+  color: #0343d9;
+  font-size: 24px;
+}
+.academy-lessons h2 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+.academy-lessons h3 {
+  font-size: 16px;
+  color: #475256;
+  margin: 22px 0 8px;
+}
+.learning-records {
+  margin: 48px 0;
+}
+.learning-records > .section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.learning-records h2 {
+  font-size: 28px;
+  margin: 12px 0;
+}
+.learner-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  border-block: 1px solid #b4bdc1;
+  padding: 24px 0;
+}
+.learner-progress > div {
+  flex: 1;
+  min-width: 250px;
+}
+.learner-progress strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 8px;
+  overflow-wrap: anywhere;
+}
+.learner-progress span {
+  font-size: 14px;
+  color: #343f45;
+}
+.learner-progress p {
+  margin-top: 10px;
+  font-size: 16px;
+}
+.shared-records {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+.shared-records > article {
+  border: 1px solid #b3bcbf;
+  padding: 26px;
+  min-width: 0;
+  background: #f8f8f4;
+}
+.record-signature {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+.shared-records h3 {
+  font-size: 23px;
+  margin: 18px 0;
+}
+.record-text {
+  margin: 16px 0;
+}
+.record-text > span {
+  font-size: 14px;
+  color: #465054;
+}
+.record-text p {
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 6px 0;
+}
+.record-feedback {
+  border-top: 1px solid #b5bfc1;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+.record-feedback h4 {
+  font-size: 17px;
+}
+.feedback-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #d3d6d6;
+}
+.feedback-item b {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.feedback-form {
+  margin-top: 20px;
+}
+.feedback-form button {
+  min-height: 40px;
+}
+.invite-form {
+  display: flex;
+  align-items: end;
+  gap: 24px;
+  margin: 32px 0;
+}
+.invite-form label {
+  flex: 1;
+  max-width: 500px;
+}
+.invitation-list {
+  margin-top: 48px;
+}
+.academy-conflict {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.academy-conflict pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 300px;
+  overflow: auto;
+  font-size: 14px;
+  background: #fff;
+  padding: 12px;
+}
+.academy-warning {
+  position: sticky;
+  bottom: 0;
+  z-index: 12;
+  padding: 16px 4%;
+  background: #efe2c9;
+  color: #452f0e;
+  border-top: 1px solid #bba077;
+  font-size: 16px;
+}
+.academy-warning button {
+  padding: 8px 12px;
+  text-decoration: underline;
+}
+.academy-toolbar .text-btn {
+  white-space: normal;
+}
+.public-studio .cloud-login {
+  margin-top: 20px;
+}
+@media (max-width: 1100px) {
+  .academy-courses {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .academy-toolbar {
+    gap: 12px;
+  }
+  .academy-home-lower {
+    gap: 28px;
+  }
+  .academy-courses article > .project-artwork,
+  .custom-course-mark {
+    height: 180px;
+  }
+}
+@media (max-width: 700px) {
+  .academy-courses,
+  .shared-records,
+  .academy-home-lower,
+  .academy-conflict {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .academy-toolbar {
+    padding: 10px 20px;
+    gap: 8px 16px;
+  }
+  .academy-toolbar select {
+    max-width: 210px;
+  }
+  .academy-status {
+    margin-left: 0;
+  }
+  .academy-courses {
+    gap: 20px;
+  }
+  .academy-lessons article {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .academy-lessons article > button {
+    grid-column: 2;
+  }
+  .invite-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .shared-records > article {
+    padding: 20px;
+  }
+  .learning-records h2 {
+    font-size: 24px;
+  }
+  .academy-toolbar > span {
+    font-size: 14px;
+  }
+  .academy-courses h2 {
+    font-size: 24px;
+  }
+  .academy-home-lower {
+    gap: 18px;
+  }
+  .learner-progress > div {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+}
