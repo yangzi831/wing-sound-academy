@@ -1,5 +1,7 @@
 # WING SOUND ACADEMY
 
+> 当前项目的实际配置进度见 [HANDOFF.md](HANDOFF.md)（2026-11-06）：学院迁移已执行、SMTP 已保存、网页邀请已被邮件服务接受；朋友收信与加入仍待确认。下方为通用配置步骤，已完成的 migration 无需重跑。
+
 学院课程与创作平台。React + TypeScript + Vite；GitHub Pages + 现有 Supabase Auth / Postgres / 私有 Storage。
 
 网站：[https://yangzi831.github.io/wing-sound-academy/](https://yangzi831.github.io/wing-sound-academy/)
