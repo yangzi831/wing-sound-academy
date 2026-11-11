@@ -11,6 +11,7 @@ import {
   setBackupAudioResolver,
 } from "./storage";
 import { authCallback, supabase, cloudConfigured } from "./supabase";
+import { requestEmailAccess, emailAccessError } from "./auth-login";
 import { getAudio, BUCKET } from "./cloud-audio";
 import { cloudTransport } from "./cloud-transport";
 import {
@@ -46,13 +47,13 @@ export function Login({ academy = false }: { academy?: boolean }) {
       <div>
         <span className="eyebrow">
           {academy
-            ? "ACADEMY / MEMBERS ONLY"
+            ? "ACADEMY / OPEN REGISTRATION"
             : "PERSONAL STUDIO / PRIVATE ACCESS"}
         </span>
-        <h2>{academy ? "进入学院" : "进入个人工作室"}</h2>
+        <h2>{academy ? "注册 / 登录学院" : "进入个人工作室"}</h2>
         <p>
           {academy
-            ? "使用受邀邮箱验证身份，登录会话将保留。学习记录和试听作品仅向学院成员开放，各自编辑本人的记录。"
+            ? "使用邮箱注册或登录，无需邀请和密码。验证邮箱后自动加入同一学院；成员共享课程、笔记和试听作品，各自编辑本人的记录。登录会话将保留。"
             : "首次在此设备验证邮箱。登录会话将保留，课程记录和试听文件仅向本人开放。"}
         </p>
       </div>
@@ -65,34 +66,32 @@ export function Login({ academy = false }: { academy?: boolean }) {
             try {
               if (sent) {
                 const { error } = await supabase!.auth.verifyOtp({
-                  email,
+                  email: email.trim().toLowerCase(),
                   token: token.trim(),
                   type: "email",
                 });
                 if (error) throw error;
               } else {
-                const { error } = await supabase!.auth.signInWithOtp({
+                await requestEmailAccess(
+                  supabase!.auth,
                   email,
-                  options: {
-                    shouldCreateUser: false,
-                    emailRedirectTo: authCallback(),
-                  },
-                });
-                if (error) throw error;
+                  academy,
+                  authCallback(),
+                );
                 setSent(true);
                 setMessage(
-                  "验证码已发送。请使用预先授权的邮箱，并检查垃圾邮件。",
+                  "验证邮件已发送。请在此输入验证码，或点击邮件中的验证链接；请使用最新邮件，并检查垃圾邮件。",
                 );
               }
             } catch (e) {
-              setMessage((e as Error).message);
+              setMessage(emailAccessError(e));
             } finally {
               setBusy(false);
             }
           }}
         >
           <label className="field">
-            <span>授权邮箱</span>
+            <span>{academy ? "邮箱" : "授权邮箱"}</span>
             <input
               required
               type="email"

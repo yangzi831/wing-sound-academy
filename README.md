@@ -1,6 +1,6 @@
 # WING SOUND ACADEMY
 
-> 当前项目的实际配置进度见 [HANDOFF.md](HANDOFF.md)（2026-11-06）：学院迁移已执行、SMTP 已保存、网页邀请已被邮件服务接受；朋友收信与加入仍待确认。下方为通用配置步骤，已完成的 migration 无需重跑。
+> 当前使用开放邮箱注册，验证后自动加入同一共享学院；一次性升级步骤见下节。历史 SMTP 配置进度见 [HANDOFF.md](HANDOFF.md)，已完成的旧 migration 无需重跑。
 
 学院课程与创作平台。React + TypeScript + Vite；GitHub Pages + 现有 Supabase Auth / Postgres / 私有 Storage。
 
@@ -38,7 +38,25 @@
 
 管理员可在网页新增、排序、归档、恢复自定义课程，并设置每个人的课程角色。成员共同编辑简介、目标、课次主题、内容、练习、参考资料和可选日期；不强制16周或5项目。课程角色不授予学院管理权。学习进度按作者与课次去重；老师显示备课和反馈任务，不计算学生作业完成率。
 
-## 现有 Supabase 项目升级：只做一次
+## 开放注册：现有站点的一次性升级（2026-11-11）
+
+当前采用邮箱验证码 / Magic Link 合并注册登录，不需要密码或学院邀请。**任何完成邮箱验证并进入网站的注册者，都会自动加入原有同一学院，读取共享课程、所有成员笔记、作品与试听音频。** 新成员默认是普通成员；个人记录仍只由作者编辑，管理员权限不变。不是为每位注册者新建学院或复制课程。
+
+现有 Gmail SMTP、项目 URL、Publishable Key、Pages 地址均沿用。项目所有者按顺序完成：
+
+1. Supabase → **SQL Editor → New query**，执行 `supabase/migrations/202611110001_open_registration.sql` 全文。它只增加注册目标配置和 `academy_join_shared()`，不重跑旧迁移，不清空数据，不改变课程/作者/版本/音频。脚本可重试；默认仅在现有学院恰好一所时配置，若有多所会报错停止，应由所有者明确指定目标学院后再继续，不能随意选第一所。不要因为 GitHub Pages 发布成功就认为数据库已升级。
+2. **Authentication → Sign In / Providers（或 Settings → User Signups）** 开启 **Allow new users to sign up**；保持 Email 开启、**Confirm email 开启**、匿名登录关闭。前端学院入口使用 `shouldCreateUser: true`，首次注册与后续登录使用同一按钮。遗留个人工作室入口继续禁止创建账号。
+3. **Authentication → Email Templates → Confirm signup** 粘贴 `supabase/templates/confirm-signup.html`；**Magic Link / OTP** 沿用 `supabase/templates/magic-link.html`。两个模板都保留 `{{ .ConfirmationURL }}` 与 `{{ .Token }}`，让新用户和已有用户都可直接输入验证码，或点击最新邮件链接。Gmail SMTP 无需重新申请密码。旧 Invite user 模板和邀请函数可以保留作兼容，开放注册路径不调用该函数，**这次无需重新部署 Edge Function**。
+4. URL Configuration 沿用 Site URL `https://yangzi831.github.io/wing-sound-academy/` 和 Redirect URLs `https://yangzi831.github.io/wing-sound-academy/**`。正常注册无需 invitation/ticket 查询参数；旧邀请链接仍可处理。
+5. 发布本次前端。朋友直接打开网站 → 输入自己的邮箱 → 发送验证码 → 输入最新邮件里的验证码（或点击验证链接）→ 自动进入共享学院。已经收到过邀请但未确认的账号，也可从这个入口重新发验证邮件。会话持久保存。
+
+邮箱验证完成后，客户端先读取成员身份；尚未加入时，调用零参数 `academy_join_shared()`。服务器根据 Auth 的真实已确认邮箱和账号添加普通成员，并使用与移除成员相同的事务锁。重试不会重复添加；被管理员移除的账号不会通过自动加入恢复权限。注册配置表无浏览器读写权限，不接受前端指定学院、邮箱或管理员角色。共同内容、个人作者、CAS冲突、离线缓存、JSON备份和私有音频的现有权限保持。
+
+管理员要暂停新成员自动加入，可在 SQL Editor 执行 `update public.academy_registration set enabled=false where singleton;`；已有成员继续可用。关闭 Auth 的 Allow new users to sign up 可停止创建新账号。未验证邮箱、未加入或已移除账号仍没有学院/音频访问权。
+
+当前交付的自动化测试在本地数据库与模拟 Auth 边界下验证，不等于真实注册已成功。配置后应让朋友用自己的邮箱实测收信、验证、看到原课程和你的记录；再分别写一条记录并确认互相可见、不能代改。若仍提示 Signups not allowed，先检查第2步，不要关闭邮箱确认。注册验证邮件通常比学院邀请票据更早过期，应使用最新邮件。
+
+## 原学院基础配置：已完成的步骤无需重做
 
 当前沿用项目 `fcesbvigirhkjpfrxqpd`。前端发布不等于数据库或 Edge Function 已发布。完整 SQL 与函数代码已提供；需要项目所有者在自己的后台或已登录 CLI 执行以下步骤。**不要把管理密钥发到聊天或填进 VITE 变量。**
 
@@ -58,7 +76,7 @@
 
 - Site URL：`https://yangzi831.github.io/wing-sound-academy/`
 - Redirect URLs：保留精确根地址，并增加 `https://yangzi831.github.io/wing-sound-academy/**`，仅允许固定域名下本项目路径与动态邀请查询参数；不使用通配域名。开发需要时另加 `http://127.0.0.1:5173/**` 和 `http://127.0.0.1:4173/**`。缺少这项匹配可能使 Auth 回退到 Site URL，丢失邀请参数。
-- **Sign In / Providers**：启用 Email；保持关闭公众注册和匿名登录。普通登录发送 OTP 时 `shouldCreateUser: false`。
+- **Sign In / Providers**：启用 Email 和 Allow new users to sign up，关闭匿名登录；学院入口使用 `shouldCreateUser: true`，遗留个人工作室仍为 false。
 - 保持 Email 的 **Confirm email** 开启；Invite user 与 Magic Link 邮件模板按下一节配置。Magic Link 同时提供 `{{ .ConfirmationURL }}` 和 `{{ .Token }}`，既能点击验证，也能在页面输入验证码。会话持久化、自动刷新，不要求每次打开重新登录。
 
 ### 3. 一次性配置 Gmail SMTP（无需自有域名）
@@ -81,10 +99,11 @@
 发件地址与认证 Gmail 保持一致，不填虚构的 academy@自有域名。若没有应用专用密码入口，检查两步验证是否开启，以及高级保护或单位账号策略是否限制。修改 Google 主密码可能撤销已有应用专用密码，届时重新生成并更新 Supabase 后台。
 
 4. 在 **Authentication → Email Templates** 更新两个模板（只粘贴仓库对应HTML，不填写任何密码）：
-   - **Invite user**：复制 `supabase/templates/invite-user.html`，主题可设为「WING SOUND ACADEMY · 学院成员邀请」。
+   - **Confirm signup**：复制 `supabase/templates/confirm-signup.html`，保留验证链接和验证码供首次注册。
+   - **Invite user**（兼容旧邀请）：复制 `supabase/templates/invite-user.html`，主题可设为「WING SOUND ACADEMY · 学院成员邀请」。
    - **Magic Link / OTP**：复制 `supabase/templates/magic-link.html`，主题可设为「WING SOUND ACADEMY · 邮箱验证与登录」。
    - **必须保留 `{{ .ConfirmationURL }}` 完整链接**。Auth 会将本次请求的完整 redirect_to（包括 invitation 与 ticket）写入验证链接，不要改成固定 Site URL，也不要只发送验证码。Magic Link 模板同时保留 `{{ .Token }}` 供日常OTP登录。
-5. 检查 **Authentication → URL Configuration** 中精确 Site URL 和项目路径范围的 Redirect URLs，按上一节配置。保持关闭公众注册、匿名登录，开启 Email 和邮箱确认。**Send Email Auth Hook 如仍连接旧邮件服务，应停用该邮件钩子，使 Auth 使用这里的 SMTP**，其他身份校验不变。
+5. 检查 **Authentication → URL Configuration** 中精确 Site URL 和项目路径范围的 Redirect URLs，按上一节配置。开启公众邮箱注册、Email 和邮箱确认，关闭匿名登录。**Send Email Auth Hook 如仍连接旧邮件服务，应停用该邮件钩子，使 Auth 使用这里的 SMTP**，其他身份校验不变。
 6. 保存后在网页邀请真实朋友邮箱验证收信与加入；查看 **Authentication → Logs / Auth Logs** 排查 SMTP 错误。Gmail 与 Supabase Auth 都有发信频率限制，可在 **Authentication → Rate Limits** 查看；遇到限流稍后重发，不要密集点击。没有通过真实邮箱收信不视为端到端验证完成。
 
 Edge Function Secrets 仅需按现状保留 `SITE_URL=https://yangzi831.github.io/wing-sound-academy/`（未设置时代码也使用此默认值）。`SUPABASE_URL`、`SUPABASE_ANON_KEY`、`SUPABASE_SERVICE_ROLE_KEY` 继续来自服务端运行环境；不放进 VITE 变量。旧 `RESEND_API_KEY` / `INVITE_FROM` 已不再读取，可在 Secrets 中删除；不要删除 Supabase 自动提供的运行环境配置。
@@ -110,13 +129,13 @@ npx supabase functions deploy academy-invite --project-ref fcesbvigirhkjpfrxqpd
 
 `main` 推送后 GitHub Actions 执行 `npm ci → npm test → npm run check:edge → npm run build → Pages`。前端不需要因新增课程重新部署。部署环境变量修改则需要重新构建。无数据库管理凭据时不能靠 Publishable Key 执行 SQL 或部署服务端函数。
 
-## 日常邀请与权限
+## 兼容的邮件邀请与成员权限
 
-管理员打开「成员与邀请」，输入朋友邮箱发送。界面仅在邮件服务接受且数据库状态确认后显示已发送；提供状态、失败原因、重发、撤销与移除成员。邮件投递接受不保证一定到达收件箱，SMTP问题请查看Supabase Auth Logs及Gmail发信状态。
+日常使用直接注册登录，无需邀请。可选的旧邀请流程仍保留：管理员打开「成员与邀请」，输入朋友邮箱发送。界面仅在邮件服务接受且数据库状态确认后显示已发送；提供状态、失败原因、重发、撤销与移除成员。邮件投递接受不保证一定到达收件箱，SMTP问题请查看Supabase Auth Logs及Gmail发信状态。
 
 新账号调用服务端 `inviteUserByEmail(email, { redirectTo })`，由Auth创建待验证身份并通过SMTP发送邀请；已有已确认账号收到重复邮箱错误后，调用 `signInWithOtp({ options: { shouldCreateUser: false, emailRedirectTo } })` 发送登录邮件，不生成第二个账号。两条路径使用同一个带 `invitation` 与 `ticket` 的回调地址，Supabase的 `ConfirmationURL` 负责先验证邮箱再返回网站。原先已发送的 token_hash 邀请邮件仍兼容。票据在数据库仅存 SHA-256；接受时服务器检查当前账号的真实已验证邮箱、票据、学院、发送状态与7天有效期，再绑定成员身份。不是 Supabase 后台团队成员邀请。
 
-重复邀请会撤销旧票据并旋转新票据，发送中防重，成功发送后60秒内限制重发。过期、撤销或发送失败的邀请无法接受。Auth 邮箱确认 token 通常比7天更早过期，以项目 Auth 设置为准：打开链接后可用同一受邀邮箱 OTP 登录，再接受保留在当前标签页的邀请；后续登录邮件也携带原邀请参数，换标签页打开仍能继续。页面先等SDK消费登录回调，再清理地址栏参数，票据直到服务端确认加入后才删除。也可请管理员重发新链接。
+重复邀请会撤销旧票据并旋转新票据，发送中防重，成功发送后60秒内限制重发。过期、撤销或发送失败的邀请无法接受。Auth 邮箱确认 token 通常比7天更早过期，以项目 Auth 设置为准：打开链接后可用同一邮箱从注册/登录入口重新发送验证邮件，再自动加入学院；后续登录邮件也携带原邀请参数，换标签页打开仍能继续。页面先等SDK消费登录回调，再清理地址栏参数，票据直到服务端确认加入后才删除。也可请管理员重发新链接。
 
 普通成员不能邀请或移除成员。服务器 RLS 和 RPC 同时执行：固定课程不可写、作者不可更换、仅作者能改自己的记录、成员能看学院记录与私有音频。移除成员将其设为 inactive，不删除历史与署名；其已有 JWT 也会失去后续服务器读写和文件权限。已下载到其设备的旧副本无法远程抹除。之后新建的共享课程自动对有效成员开放。
 
@@ -147,11 +166,11 @@ npx supabase functions deploy academy-invite --project-ref fcesbvigirhkjpfrxqpd
 完成上述一次性后台部署后，需要用两个真实邮箱 / 浏览器验收：
 
 1. 原管理员检查原笔记、P04五阶段、版本讲评关联、音频试听，并导出新备份。
-2. 网页邀请朋友，实际收信并确认，自动加入同一学院；朋友个人进度为空，可查看原管理员记录。
+2. 朋友直接注册邮箱，实际收信并验证，无需邀请自动加入同一学院；朋友个人进度为空，可查看原管理员记录与作品。
 3. 新增第四门课程，另一账号 / 设备可见；双方编辑自定义课次，固定课程直接RPC改写仍被拒绝。
 4. 分别写笔记、提交试听文件、互留反馈，筛选作者并在另一设备播放；老师不显示学生作业完成要求。
 5. 断网编辑后恢复网络，同步成功；并发改同一课次产生可恢复冲突，旧内容不静默丢失。
-6. 撤销 / 过期邀请不能加入；普通成员和外部账号不能管理成员。移除已登录成员后，其数据及音频请求被拒绝。
+6. 旧撤销 / 过期邀请不能凭票据加入，但开放注册允许任意已验证新账号直接加入；普通成员不能管理成员。移除已登录成员后，其服务器请求与自动加入重试均被拒绝，历史署名保留。
 7. 导入旧完整JSON，比较差异、试听音频并确认恢复快照。迁移前后不手动清除旧数据。
 
 保留黑白灰、电蓝、原创SVG项目封面、16px正文与原电子音乐工作台；新增学院层与简单表单，不引入后台管理系统。

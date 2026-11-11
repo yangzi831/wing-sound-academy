@@ -115,19 +115,35 @@ export default function AcademyRoot() {
     const start = async () => {
       try {
         await callbackPromise?.catch(() => {});
+        if (!session.user.email_confirmed_at)
+          throw new Error("请先完成邮件中的邮箱验证，再进入学院。");
         try {
           await acceptPending();
         } catch (e) {
           if (active) setInvitationError((e as Error).message);
         }
-        const index =
+        let index =
           await academyRPC<{ id: string; name: string; role: string }[]>(
             "academy_index",
           );
-        if (!index.length)
-          throw new Error(
-            "此账号尚未加入学院。请打开管理员发来的有效邀请邮件；现有管理员需先执行学院增量迁移。",
-          );
+        if (!index.length) {
+          try {
+            await academyRPC("academy_join_shared");
+          } catch (e) {
+            if ((e as { code?: string }).code === "PGRST202")
+              throw new Error(
+                "邮箱已验证，管理员尚需执行开放注册的增量迁移（202611110001_open_registration.sql）。",
+              );
+            throw e;
+          }
+          index =
+            await academyRPC<{ id: string; name: string; role: string }[]>(
+              "academy_index",
+            );
+          if (!index.length) throw new Error("未确认学院成员身份，请重试。");
+          sessionStorage.removeItem("wing-pending-invitation");
+          if (active) setInvitationError("");
+        }
         const snapshot = await academyTransport(index[0].id, uid).read();
         if (!active) return;
         const state = loadAcademy(uid, snapshot);
@@ -1628,9 +1644,11 @@ export function MemberPanel({ engine }: { engine: AcademyEngine }) {
     <>
       <div className="page-title">
         <div>
-          <span className="eyebrow">ACADEMY MEMBERS / INVITATION ONLY</span>
+          <span className="eyebrow">ACADEMY / SHARED MEMBERSHIP</span>
           <h1>学院成员与邀请</h1>
-          <p>邀请加入本学院。课程角色与学院管理权限分别设置。</p>
+          <p>
+            朋友可直接打开网站注册并验证邮箱，无需邀请。开放注册启用后，所有已验证注册者自动加入本学院，共享课程、笔记和作品；各自编辑自己的记录。课程角色与学院管理权限分别设置。
+          </p>
         </div>
       </div>
       <form

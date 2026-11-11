@@ -601,7 +601,7 @@ export function Syllabus({
         {!fixed && (
           <button className="secondary-btn" onClick={edit}>
             <Pencil size={15} />
-            {publicView ? "登录个人工作室" : "编辑课程信息"}
+            {publicView ? "注册 / 登录" : "编辑课程信息"}
           </button>
         )}
       </PageTitle>

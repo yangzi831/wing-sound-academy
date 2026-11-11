@@ -34,6 +34,56 @@ function callback(hash = "") {
   return `${base}?invitation=${invitation}&ticket=${ticket}${hash}`;
 }
 describe("invitation login callback and follow-up login redirect", () => {
+  it.each(["signup", "magiclink"])(
+    "handles ordinary %s callbacks without requiring an invitation",
+    async (type) => {
+      const b = browser(
+        `${base}?course=keyboard#access_token=TEST&refresh_token=TEST&type=${type}`,
+      );
+      const auth = {
+        initialize: vi.fn(async () => ({ error: null })),
+        getSession: vi.fn(async () => ({
+          data: { session: { user: { id: "new-user" } } },
+          error: null,
+        })),
+        verifyOtp: vi.fn(),
+      };
+      await finishInvitation(auth, b);
+      expect(b.location.href).toBe(`${base}?course=keyboard`);
+      expect(readPendingInvitation(b.storage)).toBeNull();
+      expect(auth.getSession).toHaveBeenCalledOnce();
+    },
+  );
+  it("surfaces ordinary login initialization errors even when SDK already consumed the URL", async () => {
+    const b = browser(base);
+    await expect(
+      finishInvitation(
+        {
+          initialize: async () => ({ error: new Error("callback failed") }),
+          getSession: async () => ({ data: { session: null }, error: null }),
+          verifyOtp: vi.fn(),
+        },
+        b,
+      ),
+    ).rejects.toThrow("重新发送验证邮件");
+  });
+  it("leaves non-auth routes intact and accepts signup token_hash callbacks", async () => {
+    const b = browser(`${base}?type=lesson#projects`),
+      auth = {
+        initialize: vi.fn(async () => ({ error: null })),
+        getSession: vi.fn(),
+        verifyOtp: vi.fn(async () => ({ error: null })),
+      };
+    await finishInvitation(auth, b);
+    expect(b.history.replaceState).not.toHaveBeenCalled();
+    b.location.href = `${base}?token_hash=TEST&type=signup`;
+    await finishInvitation(auth, b);
+    expect(auth.verifyOtp).toHaveBeenCalledWith({
+      token_hash: "TEST",
+      type: "signup",
+    });
+    expect(b.location.href).toBe(base);
+  });
   it.each(["invite", "magiclink"])(
     "keeps parameters until SDK consumes the %s login fragment",
     async (type) => {
