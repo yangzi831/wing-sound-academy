@@ -6,6 +6,23 @@
 
 网站：[https://yangzi831.github.io/wing-sound-academy/](https://yangzi831.github.io/wing-sound-academy/)
 
+## 作品试听与创作记录
+
+这里集中保存作品的公开试听链接。以后有新作品或新版本，可以直接更新本节。
+
+| 作品 | 创作者 | 版本日期 | 作品介绍与试听 | 音频直链 |
+| --- | --- | --- | --- | --- |
+| Last Ocean（暂名） | 小翅膀 | 2026-11-12 · 阶段版本 | [打开作品页](https://yangzi831.github.io/wing-sound-academy/listen/last-ocean/) | [播放 / 下载 MP3](https://yangzi831.github.io/wing-sound-academy/audio/lastocean.mp3) |
+
+Last Ocean：海洋记忆与未来生命的声音实验，约 1:39，320 kbps MP3。作品页包含创作背景、概念、时间线、制作流程及阶段复盘。
+
+### 以后怎样添加或更新链接
+
+- **已有作品更新**：修改作品页内容或替换音频文件，并更新上表的版本日期；保留原路径即可继续使用原链接。
+- **新增作品**：把音频放到 `public/audio/<作品名>.mp3`，把介绍页放到 `public/listen/<作品名>/index.html`，再在上表追加一行。
+- **链接规则**：发布后的网址不包含 `public/`。例如 `public/audio/lastocean.mp3` 对应上面的 MP3 直链。
+- **学院网站引用**：分享完整说明时使用作品页链接；在播放器里使用音频直链。这里的音频由 GitHub Pages 托管，不占用 Supabase 音频存储空间。提交到 `main` 后，等待 GitHub Pages 发布成功。
+
 ## 本地开发与检查
 
 推荐 Node.js 22。执行 `npm ci`、`npm run dev`；校验使用 `npm test`、`npm run check:edge`、`npm run build`。
